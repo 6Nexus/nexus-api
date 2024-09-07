@@ -44,8 +44,4 @@ public class Desaparecido {
     private String roupaDesaparecimento;
 
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
 }
