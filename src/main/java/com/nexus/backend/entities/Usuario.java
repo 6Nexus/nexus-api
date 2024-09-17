@@ -2,11 +2,14 @@ package com.nexus.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nexus.backend.dto.CursoDto;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import com.nexus.backend.enums.TipoUsuario;
 import com.nexus.backend.strategy.VisualizacaoCursoStrategy;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -17,8 +20,12 @@ public abstract class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     private String nome;
+    @Email
     private String email;
+    @NotBlank
+    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$")
     private String cpf;
     private String telefone;
 

@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,8 @@ public class Desaparecido {
 
     private Integer idResponsavel;
     private String boletimOcorrencia;
+
+    @PastOrPresent
     private LocalDate dataOcorrencia;
     private LocalDate dataComunicacao;
     private String imagem;
@@ -27,6 +31,7 @@ public class Desaparecido {
     private String apelido;
     private String rg;
     private String cpf;
+    @Past
     private LocalDate dataNascimento;
     private String cidade;
     private String sexo;

@@ -3,6 +3,7 @@ package com.nexus.backend.entities;
 import com.nexus.backend.enums.TipoUsuario;
 import com.nexus.backend.strategy.VisualizacaoCursoProfessor;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,7 @@ public class Professor extends Usuario {
         this.setVisualizacaoCursoStrategy(new VisualizacaoCursoProfessor());
     }
 
+    @NotBlank
     private String areaAtuacao;
     private Boolean aprovado;
 }
