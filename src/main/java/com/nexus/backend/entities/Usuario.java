@@ -25,7 +25,7 @@ public abstract class Usuario {
     @Email
     private String email;
     @NotBlank
-    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$")
+//    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$")
     private String cpf;
     private String telefone;
 
