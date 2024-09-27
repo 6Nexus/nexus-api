@@ -2,6 +2,7 @@ package com.nexus.backend.service;
 
 import com.nexus.backend.entities.Professor;
 import com.nexus.backend.repositories.ProfessorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProfessorService {
-    @Autowired
-    private ProfessorRepository professorRepository;
+
+    private final ProfessorRepository professorRepository;
 
     public List<Professor> getAll() {
         return professorRepository.findAll();

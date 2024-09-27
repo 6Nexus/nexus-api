@@ -4,6 +4,7 @@ import com.nexus.backend.entities.Professor;
 import com.nexus.backend.repositories.ProfessorRepository;
 import com.nexus.backend.service.ProfessorService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +14,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/professores")
+@RequiredArgsConstructor
 public class ProfessorController {
 
-    @Autowired
-    private ProfessorService professorService;
+    private final ProfessorService professorService;
 
     // Cadastrar professor
     @PostMapping

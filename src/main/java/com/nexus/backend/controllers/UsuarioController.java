@@ -65,17 +65,17 @@ public class UsuarioController {
         return ResponseEntity.status(404).build();
     }
 
-    // Novo método: Visualizar dados de curso com base no tipo de usuário (utilizando Strategy)
-    @GetMapping("/{id}/curso/{cursoId}")
-    public ResponseEntity<CursoDto> visualizarDadosCurso(@PathVariable int id, @PathVariable int cursoId) {
-        Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
-
-        if (usuarioOp.isPresent()) {
-            Usuario usuario = usuarioOp.get();
-            CursoDto cursoDto = usuario.visualizarCurso(cursoId); // Aplica a estratégia de visualização
-            return ResponseEntity.status(200).body(cursoDto);
-        }
-
-        return ResponseEntity.status(404).build();
-    }
+//    // Novo método: Visualizar dados de curso com base no tipo de usuário (utilizando Strategy)
+//    @GetMapping("/{id}/curso/{cursoId}")
+//    public ResponseEntity<CursoDto> visualizarDadosCurso(@PathVariable int id, @PathVariable int cursoId) {
+//        Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
+//
+//        if (usuarioOp.isPresent()) {
+//            Usuario usuario = usuarioOp.get();
+//            CursoDto cursoDto = usuario.visualizarCurso(cursoId); // Aplica a estratégia de visualização
+//            return ResponseEntity.status(200).body(cursoDto);
+//        }
+//
+//        return ResponseEntity.status(404).build();
+//    }
 }
