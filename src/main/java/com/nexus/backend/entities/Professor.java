@@ -21,10 +21,8 @@ public class Professor extends Usuario {
 ////        this.setVisualizacaoCursoStrategy(new VisualizacaoCursoProfessor());
 //    }
 
-    @NotBlank
     private String areaAtuacao;
 
-    @AssertFalse
     private Boolean aprovado;
 
 }

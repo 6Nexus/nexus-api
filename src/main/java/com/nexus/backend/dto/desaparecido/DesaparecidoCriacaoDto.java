@@ -1,25 +1,13 @@
-package com.nexus.backend.entities;
+package com.nexus.backend.dto.desaparecido;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.PastOrPresent;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-
-@Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
-public class Desaparecido {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class DesaparecidoCriacaoDto {
     private String nome;
     private String apelido;
     private String rg;

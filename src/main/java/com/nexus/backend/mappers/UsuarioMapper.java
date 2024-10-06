@@ -23,7 +23,7 @@ public abstract class UsuarioMapper <entityT extends Usuario, dtoT extends Usuar
         entity.setSenha(dto.getSenha());
         entity.setEmail(dto.getEmail());
         entity.setTelefone(dto.getTelefone());
-//        entity.setTipoUsuario(dto.getTipoUsuario());
+        entity.setTipoUsuario(dto.getTipoUsuario());
 
         return (entityT) entity;
     }

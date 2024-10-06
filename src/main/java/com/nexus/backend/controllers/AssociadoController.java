@@ -25,18 +25,17 @@ public class AssociadoController {
 
     // Cadastrar associado
     @PostMapping
-    public ResponseEntity<AssociadoRespostaDto> cadastrarAssociado(@RequestBody @Valid AssociadoCriacaoDto a){
+    public ResponseEntity<AssociadoRespostaDto> cadastrarAssociado(@RequestBody @Valid AssociadoCriacaoDto a) {
         Associado entity = associadoMapper.toCriacaoEntity(a);
         Associado associadoSalvo = associadoService.register(entity);
-        AssociadoRespostaDto returnDto = associadoMapper.toRespostaDto(associadoSalvo);
-        return ResponseEntity.created(null).body(returnDto);
+        return ResponseEntity.created(null).body(associadoMapper.toRespostaDto(associadoSalvo));
     }
 
     // Listar todos os associados
     @GetMapping
     public ResponseEntity<List<AssociadoRespostaDto>> listarAssociados() {
         List<Associado> associados = associadoService.getAll();
-        if(associados.isEmpty()) return ResponseEntity.noContent().build();
+        if (associados.isEmpty()) return ResponseEntity.noContent().build();
         List<AssociadoRespostaDto> associadoRespostaDtoList = associados
                 .stream()
                 .map(associadoMapper::toRespostaDto)
@@ -46,19 +45,24 @@ public class AssociadoController {
 
     // Buscar associado por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Associado> buscarPorId(@PathVariable int id){
-        return ResponseEntity.ok(associadoService.getById(id));
+    public ResponseEntity<AssociadoRespostaDto> buscarPorId(@PathVariable int id) {
+        Associado a = associadoService.getById(id);
+        AssociadoRespostaDto dto = associadoMapper.toRespostaDto(a);
+        return ResponseEntity.ok(dto);
     }
 
     // Atualizar associado
     @PutMapping("/{id}")
-    public ResponseEntity<Associado> atualizarAssociado(@PathVariable int id, @RequestBody @Valid Associado a){
-        return ResponseEntity.ok(associadoService.update(id,a));
+    public ResponseEntity<AssociadoRespostaDto> atualizarAssociado(@PathVariable int id, @RequestBody @Valid AssociadoCriacaoDto a) {
+        Associado entity = associadoMapper.toCriacaoEntity(a);
+        Associado associadoSalvo = associadoService.update(id, entity);
+        AssociadoRespostaDto returnDto = associadoMapper.toRespostaDto(associadoSalvo);
+        return ResponseEntity.created(null).body(returnDto);
     }
 
     // Deletar associado
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarAssociado(@PathVariable int id){
+    public ResponseEntity<Void> deletarAssociado(@PathVariable int id) {
         associadoService.delete(id);
         return ResponseEntity.noContent().build();
     }

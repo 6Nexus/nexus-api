@@ -22,7 +22,8 @@ public class DesaparecidoService {
     }
 
     public Desaparecido getById(Integer id) {
-        return desaparecidoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return desaparecidoRepository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public List<Desaparecido> getByDataOcorrencia(LocalDate inicio, LocalDate fim){

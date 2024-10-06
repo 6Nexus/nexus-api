@@ -34,6 +34,6 @@ public class UsuarioDto {
     private String telefone;
 
 //        @Enumerated(EnumType.STRING)
-//    private TipoUsuario tipoUsuario;
+    private TipoUsuario tipoUsuario;
 
 }

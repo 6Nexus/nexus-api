@@ -3,6 +3,8 @@ package com.nexus.backend.mappers;
 import com.nexus.backend.dto.associado.AssociadoCriacaoDto;
 import com.nexus.backend.dto.associado.AssociadoRespostaDto;
 import com.nexus.backend.entities.Associado;
+import com.nexus.backend.enums.TipoUsuario;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,11 +23,11 @@ public class AssociadoMapper extends UsuarioMapper<Associado, AssociadoCriacaoDt
                 .build();
     }
 
-    public Associado toCriacaoEntity(AssociadoCriacaoDto dto){
+    public Associado toCriacaoEntity(@Valid AssociadoCriacaoDto dto){
         if (dto==null) return null;
 
         Associado associado = super.toEntity(dto);
-
+        associado.setTipoUsuario(TipoUsuario.ASSOCIADO);
         associado.setGrauParentescoComDesaparecido(dto.getGrauParentescoComDesaparecido());
         associado.setEndereco(dto.getEndereco());
 
