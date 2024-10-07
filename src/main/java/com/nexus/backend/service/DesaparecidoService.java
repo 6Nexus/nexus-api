@@ -2,6 +2,7 @@ package com.nexus.backend.service;
 
 import com.nexus.backend.entities.Desaparecido;
 import com.nexus.backend.entities.Professor;
+import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.DesaparecidoRepository;
 import com.nexus.backend.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +40,14 @@ public class DesaparecidoService {
     }
 
     public Desaparecido update(Integer id, Desaparecido d) {
-        if (!desaparecidoRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!desaparecidoRepository.existsById(id)) throw new EntityNotFoundException("Desaparecido");
 
         d.setId(id);
         return desaparecidoRepository.save(d);
     }
 
     public void delete(Integer id) {
-        if (!desaparecidoRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!desaparecidoRepository.existsById(id)) throw new  EntityNotFoundException("Desaparecido");
 
         desaparecidoRepository.deleteById(id);
     }

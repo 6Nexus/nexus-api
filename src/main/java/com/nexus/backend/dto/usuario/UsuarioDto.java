@@ -25,7 +25,7 @@ public class UsuarioDto {
     private String email;
 
     @NotBlank
-    @Size(min = 8)
+    @Size(min = 6)
     private String senha;
 
     @NotBlank

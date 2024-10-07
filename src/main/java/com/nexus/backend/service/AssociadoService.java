@@ -2,6 +2,7 @@ package com.nexus.backend.service;
 
 import com.nexus.backend.entities.Associado;
 import com.nexus.backend.entities.Desaparecido;
+import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.AssociadoRepository;
 import com.nexus.backend.repositories.DesaparecidoRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +31,14 @@ public class AssociadoService {
     }
 
     public Associado update(Integer id, Associado a) {
-        if (!associadoRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
 
         a.setId(id);
         return associadoRepository.save(a);
     }
 
     public void delete(Integer id) {
-        if (!associadoRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!associadoRepository.existsById(id)) throw new  EntityNotFoundException("Associado");
 
         associadoRepository.deleteById(id);
     }

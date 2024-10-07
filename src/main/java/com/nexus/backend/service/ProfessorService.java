@@ -1,6 +1,7 @@
 package com.nexus.backend.service;
 
 import com.nexus.backend.entities.Professor;
+import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ public class ProfessorService {
     }
 
     public Professor getById(Integer id) {
-        return professorRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return professorRepository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public Professor register(Professor p) {
@@ -30,14 +32,14 @@ public class ProfessorService {
     }
 
     public Professor update(Integer id, Professor p) {
-        if (!professorRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
 
         p.setId(id);
         return professorRepository.save(p);
     }
 
     public void delete(Integer id) {
-        if (!professorRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
 
         professorRepository.deleteById(id);
     }
