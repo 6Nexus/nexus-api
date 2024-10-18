@@ -3,7 +3,7 @@ package com.nexus.backend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nexus.backend.dto.CursoDto;
 import com.nexus.backend.enums.TipoUsuario;
-import com.nexus.backend.strategy.VisualizacaoCursoStrategy;
+//import com.nexus.backend.strategy.VisualizacaoCursoStrategy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,7 +1,7 @@
 package com.nexus.backend.entities;
 
 import com.nexus.backend.enums.TipoUsuario;
-import com.nexus.backend.strategy.VisualizacaoCursoAssociado;
+//import com.nexus.backend.strategy.VisualizacaoCursoAssociado;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
