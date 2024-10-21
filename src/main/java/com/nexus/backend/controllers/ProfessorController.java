@@ -2,6 +2,8 @@ package com.nexus.backend.controllers;
 
 import com.nexus.backend.dto.professor.ProfessorCriacaoDto;
 import com.nexus.backend.dto.professor.ProfessorRespostaDto;
+import com.nexus.backend.dto.usuario.UsuarioLoginDto;
+import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Professor;
 import com.nexus.backend.mappers.ProfessorMapper;
 import com.nexus.backend.repositories.ProfessorRepository;
@@ -23,6 +25,12 @@ public class ProfessorController {
     private final ProfessorService professorService;
     private final ProfessorMapper professorMapper;
 
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        UsuarioTokenDto usuarioTokenDto = professorService.autenticar(usuarioLoginDto);
+
+        return ResponseEntity.status(200).body(usuarioTokenDto);
+    }
     // Cadastrar professor
     @PostMapping
     public ResponseEntity<ProfessorRespostaDto> cadastrarProfessor(@RequestBody @Valid ProfessorCriacaoDto p) {
