@@ -20,30 +20,16 @@ public abstract class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    //    @NotBlank
     private String nome;
-    //    @Email
+
     private String email;
     private String senha;
-    //    @NotBlank
-//    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$")
+
     private String cpf;
     private String telefone;
 
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario;
 
-//    @Transient  // Indica ao Hibernate que este campo não será persistido no banco de dados
-//    @JsonIgnore // Ignora esse campo na serialização/desserialização
-//    protected VisualizacaoCursoStrategy visualizacaoCursoStrategy;
-//
-//    // Método para usar a estratégia de visualização de curso
-//    public CursoDto visualizarCurso(Integer cursoId) {
-//        if (visualizacaoCursoStrategy != null) {
-//            return visualizacaoCursoStrategy.visualizarCurso(cursoId);
-//        } else {
-//            throw new UnsupportedOperationException("Estratégia de visualização não definida!");
-//        }
-//    }
+
 }

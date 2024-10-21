@@ -2,6 +2,8 @@ package com.nexus.backend.controllers;
 
 import com.nexus.backend.dto.associado.AssociadoCriacaoDto;
 import com.nexus.backend.dto.associado.AssociadoRespostaDto;
+import com.nexus.backend.dto.usuario.UsuarioLoginDto;
+import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Associado;
 import com.nexus.backend.mappers.AssociadoMapper;
 import com.nexus.backend.repositories.AssociadoRepository;
@@ -23,6 +25,12 @@ public class AssociadoController {
     private final AssociadoService associadoService;
     private final AssociadoMapper associadoMapper;
 
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        UsuarioTokenDto usuarioTokenDto = associadoService.autenticar(usuarioLoginDto);
+
+        return ResponseEntity.status(200).body(usuarioTokenDto);
+    }
     // Cadastrar associado
     @PostMapping
     public ResponseEntity<AssociadoRespostaDto> cadastrarAssociado(@RequestBody @Valid AssociadoCriacaoDto a) {
