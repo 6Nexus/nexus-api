@@ -15,12 +15,6 @@ import lombok.*;
 @Builder
 public class Professor extends Usuario {
 
-//    public Professor() {
-//        // Inicializa o tipo de usuário e a estratégia de visualização para Professor
-//        this.setTipoUsuario(TipoUsuario.PROFESSOR);
-////        this.setVisualizacaoCursoStrategy(new VisualizacaoCursoProfessor());
-//    }
-
     private String areaAtuacao;
 
     private Boolean aprovado;

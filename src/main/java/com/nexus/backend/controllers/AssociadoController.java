@@ -25,6 +25,7 @@ public class AssociadoController {
     private final AssociadoService associadoService;
     private final AssociadoMapper associadoMapper;
 
+    // Login com JWT
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
         UsuarioTokenDto usuarioTokenDto = associadoService.autenticar(usuarioLoginDto);
