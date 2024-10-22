@@ -3,6 +3,7 @@ package com.nexus.backend.controllers.questionary;
 import com.nexus.backend.dto.questionary.pergunta.PerguntaMapper;
 import com.nexus.backend.dto.questionary.questionario.QuestionarioCriacaoDto;
 import com.nexus.backend.dto.questionary.questionario.QuestionarioMapper;
+import com.nexus.backend.dto.questionary.questionario.QuestionarioRespostaDto;
 import com.nexus.backend.dto.questionary.resposta.RespostaMapper;
 import com.nexus.backend.entities.questionary.Pergunta;
 import com.nexus.backend.entities.questionary.Questionario;
@@ -13,10 +14,7 @@ import com.nexus.backend.service.questionary.RespostaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,5 +44,20 @@ public class QuestionarioController {
             });
 
         return ResponseEntity.created(null).body(questionarioSalvoNoBanco.getId());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<QuestionarioRespostaDto> buscarPorId(@PathVariable Integer id){
+        Questionario questionarioEncontrado = questionarioService.buscarPorId(id);
+        Pergunta perguntaEncontrada = perguntaService.buscarPorId(questionarioEncontrado.getId());
+        List<Resposta> respostasEncontradas = respostaService.buscarPorId(perguntaEncontrada.getId());
+
+        if (respostasEncontradas.isEmpty()) return ResponseEntity.noContent().build();
+
+        QuestionarioRespostaDto dtoResposta = QuestionarioMapper.toRespostaDto(
+                questionarioEncontrado, perguntaEncontrada, respostasEncontradas
+        );
+
+        return ResponseEntity.ok(dtoResposta);
     }
 }

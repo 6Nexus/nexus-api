@@ -3,6 +3,7 @@ package com.nexus.backend.service.questionary;
 import com.nexus.backend.entities.questionary.Pergunta;
 import com.nexus.backend.entities.questionary.Questionario;
 import com.nexus.backend.entities.questionary.Resposta;
+import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.questionary.PerguntaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,10 @@ public class PerguntaService {
     public Pergunta adicionarRespostaCorreta(Pergunta pergunta, Resposta resposta) {
         pergunta.setRespostaCerta(resposta);
         return perguntaRepository.save(pergunta);
+    }
+
+    public Pergunta buscarPorId(Integer questionarioId) {
+        return perguntaRepository.findByQuestionarioId(questionarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Pergunta"));
     }
 }
