@@ -1,8 +1,10 @@
-package com.nexus.backend.dto.questionary.questionario;
+package com.nexus.backend.mappers.questionario.questionario;
 
-import com.nexus.backend.entities.questionary.Pergunta;
-import com.nexus.backend.entities.questionary.Questionario;
-import com.nexus.backend.entities.questionary.Resposta;
+import com.nexus.backend.dto.questionario.questionario.QuestionarioCriacaoDto;
+import com.nexus.backend.dto.questionario.questionario.QuestionarioRespostaDto;
+import com.nexus.backend.entities.questionario.Pergunta;
+import com.nexus.backend.entities.questionario.Questionario;
+import com.nexus.backend.entities.questionario.Resposta;
 
 import java.util.List;
 

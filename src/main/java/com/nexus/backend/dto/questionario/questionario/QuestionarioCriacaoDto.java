@@ -1,4 +1,4 @@
-package com.nexus.backend.dto.questionary.questionario;
+package com.nexus.backend.dto.questionario.questionario;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,18 +7,19 @@ import java.util.List;
 
 @Data
 @Builder
-public class QuestionarioRespostaDto {
+public class QuestionarioCriacaoDto {
     private String titulo;
     private String descricao;
-    private QuestionarioRespostaDto.PerguntaDto pergunta;
+    private PerguntaDto pergunta;
 
     @Data
     @Builder
     public static class PerguntaDto {
         private String pergunta;
-        private List<QuestionarioRespostaDto.PerguntaDto.RespostaDto> respostas;
+        private List<RespostaDto> respostas;
 
         @Data
+        @Builder
         public static class RespostaDto {
             private String resposta;
             private Boolean respostaCerta;

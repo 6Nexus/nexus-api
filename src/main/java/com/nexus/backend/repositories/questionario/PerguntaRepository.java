@@ -1,6 +1,6 @@
-package com.nexus.backend.repositories.questionary;
+package com.nexus.backend.repositories.questionario;
 
-import com.nexus.backend.entities.questionary.Pergunta;
+import com.nexus.backend.entities.questionario.Pergunta;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

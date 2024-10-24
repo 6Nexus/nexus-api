@@ -1,9 +1,7 @@
-package com.nexus.backend.dto.questionary.pergunta;
+package com.nexus.backend.mappers.questionario.pergunta;
 
-import com.nexus.backend.dto.questionary.questionario.QuestionarioCriacaoDto;
-import com.nexus.backend.entities.questionary.Pergunta;
-
-import java.util.stream.Collectors;
+import com.nexus.backend.dto.questionario.questionario.QuestionarioCriacaoDto;
+import com.nexus.backend.entities.questionario.Pergunta;
 
 public class PerguntaMapper {
     public static Pergunta toEntidadeDto(QuestionarioCriacaoDto.PerguntaDto perguntaDtoCriacao) {

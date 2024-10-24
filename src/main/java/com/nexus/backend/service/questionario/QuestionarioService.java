@@ -1,8 +1,8 @@
-package com.nexus.backend.service.questionary;
+package com.nexus.backend.service.questionario;
 
-import com.nexus.backend.entities.questionary.Questionario;
+import com.nexus.backend.entities.questionario.Questionario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
-import com.nexus.backend.repositories.questionary.QuestionarioRepository;
+import com.nexus.backend.repositories.questionario.QuestionarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.nexus.backend.entities.questionary;
+package com.nexus.backend.entities.questionario;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
