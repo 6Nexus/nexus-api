@@ -9,7 +9,7 @@ import com.nexus.backend.entities.curso.questionario.Resposta;
 import java.util.List;
 
 public class QuestionarioMapper {
-    public static Questionario toEntidadeDto(QuestionarioCriacaoDto dto) {
+    public static Questionario toEntidade(QuestionarioCriacaoDto dto) {
         if (dto == null) return null;
 
         return Questionario.builder()

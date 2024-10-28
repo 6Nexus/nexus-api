@@ -31,7 +31,7 @@ public class QuestionarioController {
     public ResponseEntity<Integer> cadastrar(
             @RequestBody @Valid QuestionarioCriacaoDto criacaoDto) {
 
-        Questionario questionarioEntidade = QuestionarioMapper.toEntidadeDto(criacaoDto);
+        Questionario questionarioEntidade = QuestionarioMapper.toEntidade(criacaoDto);
         Questionario questionarioSalvoNoBanco = questionarioService.cadastrar(questionarioEntidade, criacaoDto.getIdModulo());
 
         Pergunta perguntaEntidade = PerguntaMapper.toEntidadeDto(criacaoDto.getPergunta());
