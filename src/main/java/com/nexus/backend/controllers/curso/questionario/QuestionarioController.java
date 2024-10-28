@@ -49,8 +49,8 @@ public class QuestionarioController {
     @GetMapping("/modulo/{idModulo}")
     public ResponseEntity<QuestionarioRespostaDto> buscarPorModulo(@PathVariable Integer idModulo){
         Questionario questionarioEncontrado = questionarioService.buscarPorModulo(idModulo);
-        Pergunta perguntaEncontrada = perguntaService.buscarPorId(questionarioEncontrado.getId());
-        List<Resposta> respostasEncontradas = respostaService.buscarPorId(perguntaEncontrada.getId());
+        Pergunta perguntaEncontrada = perguntaService.buscarPorIdQuestionario(questionarioEncontrado.getId());
+        List<Resposta> respostasEncontradas = respostaService.buscarPorIdPergunta(perguntaEncontrada.getId());
 
         if (respostasEncontradas.isEmpty()) return ResponseEntity.noContent().build();
 

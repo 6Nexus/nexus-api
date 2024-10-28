@@ -23,8 +23,8 @@ public class PerguntaService {
         return perguntaRepository.save(pergunta);
     }
 
-    public Pergunta buscarPorId(Integer questionarioId) {
-        return perguntaRepository.findByQuestionarioId(questionarioId)
+    public Pergunta buscarPorIdQuestionario(Integer idQuestionario) {
+        return perguntaRepository.findByQuestionarioId(idQuestionario)
                 .orElseThrow(() -> new EntityNotFoundException("Pergunta"));
     }
 }
