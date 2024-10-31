@@ -3,6 +3,7 @@ package com.nexus.backend.controllers;
 import com.nexus.backend.strategy.IOrdenacao;
 import com.nexus.backend.strategy.MergeSort;
 import com.nexus.backend.strategy.QuickSort;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,7 @@ public class TesteStrategyController {
         );
     }
 
+    @Operation(summary = "Este endpoint retorna a lista de músicas ordenada por um critério especificado")
     @GetMapping("/ordenarQuick/{criterio}")
     public ResponseEntity<List<Musica>> ordenarQuick(@PathVariable String criterio) {
         // Obtém a lista de músicas
@@ -82,6 +84,7 @@ public class TesteStrategyController {
         return ResponseEntity.ok(musicas);
     }
 
+    @Operation(summary = "Este endpoint retorna a lista de músicas em ordem decrescente por um critério especificado")
     @GetMapping("/ordenarMergeDesc/{criterio}")
     public ResponseEntity<List<Musica>> ordenarMerge(@PathVariable String criterio) {
         // Obtém a lista de músicas

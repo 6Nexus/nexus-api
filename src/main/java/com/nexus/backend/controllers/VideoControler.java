@@ -3,6 +3,7 @@ package com.nexus.backend.controllers;
 import com.nexus.backend.dto.PlaylistApiExternaDto;
 import com.nexus.backend.dto.VideoApiExternaDto;
 import com.nexus.backend.entities.Video;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class VideoControler {
                 .build();
     }
 
+    @Operation(summary = "Este endpoint busca os vídeos da playlist")
     @GetMapping("playlist/{id}")
     public ResponseEntity<Video[]> buscarVideosPlaylist(@PathVariable String id){
         String url = ("playlistItems?key=%s&part=snippet&playlistId=%s").formatted(token, id);
@@ -53,6 +55,7 @@ public class VideoControler {
         return raw == null ? ResponseEntity.status(204).build() : ResponseEntity.status(200).body(videos);
     }
 
+    @Operation(summary = "Este endpoint busca as visualizações de um vídeo")
     public Integer buscarViewsVideo(String videoId){
         String url = ("videos?id=%s&key=%s&part=statistics").formatted(videoId, token);
 
