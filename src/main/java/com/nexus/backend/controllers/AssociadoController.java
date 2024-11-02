@@ -14,6 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +35,7 @@ public class AssociadoController {
     private final AssociadoMapper associadoMapper;
 
     // Login com JWT
+    @Operation(summary = "Este endpoint autentica os usuários com credenciais válidas.")
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
         UsuarioTokenDto usuarioTokenDto = associadoService.autenticar(usuarioLoginDto);
@@ -33,6 +43,7 @@ public class AssociadoController {
         return ResponseEntity.status(200).body(usuarioTokenDto);
     }
     // Cadastrar associado
+    @Operation(summary = "Este endpoint permite a criação de um novo associado no sistema.")
     @PostMapping
     public ResponseEntity<AssociadoRespostaDto> cadastrarAssociado(@RequestBody @Valid AssociadoCriacaoDto a) {
         Associado entity = associadoMapper.toCriacaoEntity(a);
@@ -41,6 +52,7 @@ public class AssociadoController {
     }
 
     // Listar todos os associados
+    @Operation(summary = "Este endpoint permite listar todos os usuários do sistema")
     @GetMapping
     public ResponseEntity<List<AssociadoRespostaDto>> listarAssociados() {
         List<Associado> associados = associadoService.getAll();
@@ -53,6 +65,7 @@ public class AssociadoController {
     }
 
     // Buscar associado por ID
+    @Operation(summary = "Este endpoint permite buscar um usuário específico pelo ID")
     @GetMapping("/{id}")
     public ResponseEntity<AssociadoRespostaDto> buscarPorId(@PathVariable int id) {
         Associado a = associadoService.getById(id);
@@ -61,6 +74,7 @@ public class AssociadoController {
     }
 
     // Atualizar associado
+    @Operation(summary = "Este endpoint permite atualizar informações de um usuário específico do sistema.")
     @PutMapping("/{id}")
     public ResponseEntity<AssociadoRespostaDto> atualizarAssociado(@PathVariable int id, @RequestBody @Valid AssociadoCriacaoDto a) {
         Associado entity = associadoMapper.toCriacaoEntity(a);
@@ -70,6 +84,7 @@ public class AssociadoController {
     }
 
     // Deletar associado
+    @Operation(summary = "Este endpoint deletar o usuário do sistema")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarAssociado(@PathVariable int id) {
         associadoService.delete(id);

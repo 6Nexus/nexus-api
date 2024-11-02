@@ -8,6 +8,7 @@ import com.nexus.backend.entities.Professor;
 import com.nexus.backend.mappers.ProfessorMapper;
 import com.nexus.backend.repositories.ProfessorRepository;
 import com.nexus.backend.service.ProfessorService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,15 @@ public class ProfessorController {
     private final ProfessorService professorService;
     private final ProfessorMapper professorMapper;
 
+    @Operation(summary = "Este endpoint autentica os usuários com credenciais válidas.")
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
         UsuarioTokenDto usuarioTokenDto = professorService.autenticar(usuarioLoginDto);
 
         return ResponseEntity.status(200).body(usuarioTokenDto);
     }
-    // Cadastrar professor
+
+    @Operation(summary = "Este endpoint permite a criação de um novo professor no sistema.")
     @PostMapping
     public ResponseEntity<ProfessorRespostaDto> cadastrarProfessor(@RequestBody @Valid ProfessorCriacaoDto p) {
         Professor entity = professorMapper.toCriacaoEntity(p);
@@ -39,7 +42,7 @@ public class ProfessorController {
         return ResponseEntity.created(null).body(professorMapper.toRespostaDto(pSalvo));
     }
 
-    // Listar todos os professores
+    @Operation(summary = "Este endpoint lista todos os professores")
     @GetMapping
     public ResponseEntity<List<ProfessorRespostaDto>> listarProfessores() {
         List<Professor> professores = professorService.getAll();
@@ -53,6 +56,7 @@ public class ProfessorController {
     }
 
     // Buscar professor por ID
+    @Operation(summary = "Este endpoint busca o professor pelo ID")
     @GetMapping("/{id}")
     public ResponseEntity<ProfessorRespostaDto> buscarPorId(@PathVariable int id) {
         Professor p = professorService.getById(id);
@@ -61,6 +65,7 @@ public class ProfessorController {
     }
 
     // Atualizar professor
+    @Operation(summary = "Este endpoint atualiza os dados do professor")
     @PutMapping("/{id}")
     public ResponseEntity<ProfessorRespostaDto> atualizarProfessor(@PathVariable int id, @RequestBody @Valid ProfessorCriacaoDto p) {
         Professor entity = professorMapper.toCriacaoEntity(p);
@@ -69,6 +74,7 @@ public class ProfessorController {
     }
 
     // Deletar professor
+    @Operation(summary = "Este endpoint deleta um professor do sistema")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarProfessor(@PathVariable int id) {
         professorService.delete(id);
