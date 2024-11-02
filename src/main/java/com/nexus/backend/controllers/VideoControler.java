@@ -1,5 +1,6 @@
 package com.nexus.backend.controllers;
 
+import com.nexus.backend.ListaObj;
 import com.nexus.backend.dto.PlaylistApiExternaDto;
 import com.nexus.backend.dto.VideoApiExternaDto;
 import com.nexus.backend.entities.Video;
@@ -30,7 +31,7 @@ public class VideoControler {
     }
 
     @GetMapping("playlist/{id}")
-    public ResponseEntity<Video[]> buscarVideosPlaylist(@PathVariable String id){
+    public ResponseEntity<ListaObj<Video>> buscarVideosPlaylist(@PathVariable String id){
         String url = ("playlistItems?key=%s&part=snippet&playlistId=%s").formatted(token, id);
 
         PlaylistApiExternaDto raw = client.get()
@@ -38,14 +39,15 @@ public class VideoControler {
                                     .retrieve()
                                     .body(PlaylistApiExternaDto.class);
 
-        Video[] videos = new Video[raw.getItems().size()];
+        ListaObj<Video> videos = new ListaObj(raw.getItems().size());
+//        Video[] videos = new Video[raw.getItems().size()];
 
-        for (int i = 0; i < videos.length; i++) {
+        for (int i = 0; i < videos.getTamanho(); i++) {
             Video video = new Video();
             video.setId(raw.getVideoIds().get(i));
             video.setTitulo(raw.getTitle().get(i));
             video.setViews(buscarViewsVideo(raw.getVideoIds().get(i)));
-            videos[i] = video;
+            videos.adiciona(video);
         }
 
         videos = ordenacaoDescrescente(videos);
@@ -64,16 +66,37 @@ public class VideoControler {
         return raw.getViews();
     }
 
-    public Video[] ordenacaoDescrescente(Video[] videos){
-        for (int i = 0; i < videos.length - 1; i++) {
-            for (int j = 1; j < videos.length - i; j++) {
-                if (videos[j].getViews() > videos[j - 1].getViews()){
-                    Video variavelAuxiliarVideo = videos[j];
-                    videos[j] = videos[j - 1];
-                    videos[j - 1] = variavelAuxiliarVideo;
+    public ListaObj<Video> ordenacaoDescrescente(ListaObj<Video> videos){
+        for (int i = 0; i < videos.getTamanho() - 1; i++) {
+            for (int j = 1; j < videos.getTamanho() - i; j++) {
+                if (videos.getElemento(j).getViews() > videos.getElemento(j-1).getViews()){
+                    Video variavelAuxiliarVideo = videos.getElemento(j);
+                    videos.setElemento(j, videos.getElemento(j - 1));
+                    videos.setElemento(j - 1, variavelAuxiliarVideo);
                 }
             }
         }
         return videos;
+    }
+
+    public void pesquisaBinaria(ListaObj<Video> videos, String videoBusca){
+        int ind = 0;
+        int indTamVetor = videos.getTamanho() - 1;
+
+        while (ind <= indTamVetor) {
+            int meio = (ind + indTamVetor) / 2;
+
+            int comparacao = videoBusca.compareToIgnoreCase(videos.getElemento(meio).getTitulo());
+
+            if (comparacao == 0) {
+                System.out.println("Elemento encontrado no índice " + meio);
+                return;
+            } else if (comparacao < 0) {
+                indTamVetor = meio - 1;
+            } else {
+                ind = meio + 1;
+            }
+        }
+        System.out.println("Elemento não encontrado.");
     }
 }
