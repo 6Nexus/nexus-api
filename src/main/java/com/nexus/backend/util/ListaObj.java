@@ -1,4 +1,4 @@
-package com.nexus.backend;
+package com.nexus.backend.util;
 
 public class ListaObj<T>{
 

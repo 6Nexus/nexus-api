@@ -1,6 +1,6 @@
 package com.nexus.backend.controllers;
 
-import com.nexus.backend.ListaObj;
+import com.nexus.backend.util.ListaObj;
 import com.nexus.backend.dto.PlaylistApiExternaDto;
 import com.nexus.backend.dto.VideoApiExternaDto;
 import com.nexus.backend.entities.Video;
@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/videos")
