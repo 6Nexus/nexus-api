@@ -56,7 +56,8 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/professores/**"),
             new AntPathRequestMatcher("/h2-console/**"),
             new AntPathRequestMatcher("/h2-console/**/**"),
-            new AntPathRequestMatcher("/error/**")
+            new AntPathRequestMatcher("/error/**"),
+            new AntPathRequestMatcher("/checks/**")
     };
 
     @Bean
