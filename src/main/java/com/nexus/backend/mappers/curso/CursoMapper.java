@@ -23,6 +23,7 @@ public class CursoMapper {
                 .titulo(curso.getTitulo())
                 .categoria(curso.getCategoria())
                 .descricao(curso.getDescricao())
+                .professor(curso.getProfessor().getNome())
                 .build();
     }
 }

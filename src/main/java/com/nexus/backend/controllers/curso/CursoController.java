@@ -38,6 +38,13 @@ public class CursoController {
         return ResponseEntity.ok(cursosMapeados);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<CursoRespostaDto> listarPorId(@PathVariable Integer id) {
+        Curso cursoEncontrado = cursoService.buscarPorId(id);
+        CursoRespostaDto cursoEncontradoDto = CursoMapper.toRespostaDto(cursoEncontrado);
+        return ResponseEntity.ok(cursoEncontradoDto);
+    }
+
     @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<CursoRespostaDto>> listarPorCategoria(@PathVariable String categoria) {
         List<Curso> cursosEncontrados = cursoService.listarPorCategoria(categoria);
