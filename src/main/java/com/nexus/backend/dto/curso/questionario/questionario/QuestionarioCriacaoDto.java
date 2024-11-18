@@ -11,7 +11,7 @@ public class QuestionarioCriacaoDto {
     private String titulo;
     private String descricao;
     private Integer idModulo;
-    private PerguntaDto pergunta;
+    private List<PerguntaDto> perguntas;
 
     @Data
     @Builder
