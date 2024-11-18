@@ -34,14 +34,17 @@ public class QuestionarioController {
         Questionario questionarioEntidade = QuestionarioMapper.toEntidade(criacaoDto);
         Questionario questionarioSalvoNoBanco = questionarioService.cadastrar(questionarioEntidade, criacaoDto.getIdModulo());
 
-        Pergunta perguntaEntidade = PerguntaMapper.toEntidadeDto(criacaoDto.getPergunta());
-        Pergunta perguntaSalvaNoBanco = perguntaService.criar(perguntaEntidade, questionarioSalvoNoBanco);
+        criacaoDto.getPerguntas()
+                .forEach(pergunta -> {
+                    Pergunta perguntaEntidade = PerguntaMapper.toEntidadeDto(pergunta);
+                    Pergunta perguntaSalvaNoBanco = perguntaService.criar(perguntaEntidade, questionarioSalvoNoBanco);
 
-        criacaoDto.getPergunta().getRespostas()
-            .forEach(resposta -> {
-                Resposta respostaEntidade = RespostaMapper.toEntidadeDto(resposta);
-                Resposta respostaSalvaNoBanco = respostaService.criar(respostaEntidade, resposta.getRespostaCerta(), perguntaSalvaNoBanco);
-            });
+                    pergunta.getRespostas()
+                            .forEach(resposta -> {
+                                Resposta respostaEntidade = RespostaMapper.toEntidadeDto(resposta);
+                                respostaService.criar(respostaEntidade, resposta.getRespostaCerta(), perguntaSalvaNoBanco);
+                            });
+                });
 
         return ResponseEntity.created(null).body(questionarioSalvoNoBanco.getId());
     }
@@ -49,13 +52,16 @@ public class QuestionarioController {
     @GetMapping("/modulo/{idModulo}")
     public ResponseEntity<QuestionarioRespostaDto> buscarPorModulo(@PathVariable Integer idModulo){
         Questionario questionarioEncontrado = questionarioService.buscarPorModulo(idModulo);
-        Pergunta perguntaEncontrada = perguntaService.buscarPorIdQuestionario(questionarioEncontrado.getId());
-        List<Resposta> respostasEncontradas = respostaService.buscarPorIdPergunta(perguntaEncontrada.getId());
 
+        List<Pergunta> perguntasEncontradas = perguntaService.buscarPorIdQuestionario(questionarioEncontrado.getId());
+        if (perguntasEncontradas.isEmpty()) return ResponseEntity.noContent().build();
+        List<Integer> idsPerguntasEncontradas = perguntaService.retornarIds(perguntasEncontradas);
+
+        List<Resposta> respostasEncontradas = respostaService.buscarPorIdPerguntas(idsPerguntasEncontradas);
         if (respostasEncontradas.isEmpty()) return ResponseEntity.noContent().build();
 
         QuestionarioRespostaDto dtoResposta = QuestionarioMapper.toRespostaDto(
-                questionarioEncontrado, perguntaEncontrada, respostasEncontradas
+                questionarioEncontrado, perguntasEncontradas, respostasEncontradas
         );
 
         return ResponseEntity.ok(dtoResposta);

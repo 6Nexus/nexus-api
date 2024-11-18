@@ -22,7 +22,7 @@ public class RespostaService {
         return respostaSalvaNoBanco;
     }
 
-    public List<Resposta> buscarPorIdPergunta(Integer idPergunta) {
-        return respostaRepository.findAllByPerguntaId(idPergunta);
+    public List<Resposta> buscarPorIdPerguntas(List<Integer> ids) {
+        return respostaRepository.buscarPorIds(ids);
     }
 }

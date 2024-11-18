@@ -8,6 +8,9 @@ import com.nexus.backend.repositories.curso.questionario.PerguntaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PerguntaService {
@@ -23,8 +26,15 @@ public class PerguntaService {
         return perguntaRepository.save(pergunta);
     }
 
-    public Pergunta buscarPorIdQuestionario(Integer idQuestionario) {
-        return perguntaRepository.findByQuestionarioId(idQuestionario)
-                .orElseThrow(() -> new EntityNotFoundException("Pergunta"));
+    public List<Pergunta> buscarPorIdQuestionario(Integer idQuestionario) {
+        return perguntaRepository.findAllByQuestionarioId(idQuestionario);
+    }
+
+    public List<Integer> retornarIds(List<Pergunta> perguntas) {
+        List<Integer> ids = new ArrayList<>();
+        perguntas.forEach(pergunta -> {
+            ids.add(pergunta.getId());
+        });
+        return ids;
     }
 }

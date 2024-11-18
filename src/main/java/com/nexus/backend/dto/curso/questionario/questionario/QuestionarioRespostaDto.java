@@ -8,9 +8,10 @@ import java.util.List;
 @Data
 @Builder
 public class QuestionarioRespostaDto {
+    private Integer id;
     private String titulo;
     private String descricao;
-    private QuestionarioRespostaDto.PerguntaDto pergunta;
+    private List<QuestionarioRespostaDto.PerguntaDto> perguntas;
 
     @Data
     @Builder
@@ -19,6 +20,7 @@ public class QuestionarioRespostaDto {
         private List<QuestionarioRespostaDto.PerguntaDto.RespostaDto> respostas;
 
         @Data
+        @Builder
         public static class RespostaDto {
             private String resposta;
             private Boolean respostaCerta;

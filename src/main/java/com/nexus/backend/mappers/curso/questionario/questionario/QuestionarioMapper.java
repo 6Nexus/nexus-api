@@ -6,7 +6,9 @@ import com.nexus.backend.entities.curso.questionario.Pergunta;
 import com.nexus.backend.entities.curso.questionario.Questionario;
 import com.nexus.backend.entities.curso.questionario.Resposta;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuestionarioMapper {
     public static Questionario toEntidade(QuestionarioCriacaoDto dto) {
@@ -18,31 +20,47 @@ public class QuestionarioMapper {
                 .build();
     }
 
-    public static QuestionarioRespostaDto toRespostaDto(Questionario questionarioEncontrado, Pergunta perguntaEncontrada, List<Resposta> respostasEncontradas) {
-        if (questionarioEncontrado == null || perguntaEncontrada == null || respostasEncontradas.isEmpty()) return null;
+    public static QuestionarioRespostaDto toRespostaDto(Questionario questionarioEncontrado, List<Pergunta> perguntasEncontradas, List<Resposta> respostasEncontradas) {
+        if (questionarioEncontrado == null || perguntasEncontradas.isEmpty() || respostasEncontradas.isEmpty()) return null;
 
-        List<QuestionarioRespostaDto.PerguntaDto.RespostaDto> respostasDto =
-            respostasEncontradas.stream()
-                    .map(respostaDto -> {
-                        QuestionarioRespostaDto.PerguntaDto.RespostaDto respostaDtoMapeada = new QuestionarioRespostaDto.PerguntaDto.RespostaDto();
-                        respostaDtoMapeada.setResposta(respostaDto.getResposta());
-                        if (respostaDto.equals(perguntaEncontrada.getRespostaCerta())) respostaDtoMapeada.setRespostaCerta(true);
-                        else respostaDtoMapeada.setRespostaCerta(false);
+        List<QuestionarioRespostaDto.PerguntaDto> perguntasDto = new ArrayList<>();
+        perguntasEncontradas.forEach(pergunta -> {
+            List<Resposta> respostasDaPergunta = filtrarPorPergunta(respostasEncontradas, pergunta.getId());
+            List<QuestionarioRespostaDto.PerguntaDto.RespostaDto> respostasMapeadas = mapearRespostastoResposta(respostasDaPergunta, pergunta.getRespostaCerta().getId());
 
-                        return respostaDtoMapeada;
-                    })
-                    .toList();
-
-        QuestionarioRespostaDto.PerguntaDto perguntaDto =
+            perguntasDto.add(
                 QuestionarioRespostaDto.PerguntaDto.builder()
-                        .pergunta(perguntaEncontrada.getPergunta())
-                        .respostas(respostasDto)
-                        .build();
+                        .pergunta(pergunta.getPergunta())
+                        .respostas(respostasMapeadas)
+                        .build()
+            );
+        });
+
 
         return QuestionarioRespostaDto.builder()
+                .id(questionarioEncontrado.getId())
                 .titulo(questionarioEncontrado.getTitulo())
                 .descricao(questionarioEncontrado.getDescricao())
-                .pergunta(perguntaDto)
+                .perguntas(perguntasDto)
                 .build();
+    }
+
+    private static List<Resposta> filtrarPorPergunta(List<Resposta> respostas, Integer idPergunta) {
+        return respostas.stream()
+                .filter(resposta -> resposta.getPergunta().getId().equals(idPergunta))
+                .collect(Collectors.toList());
+    }
+
+    private static List<QuestionarioRespostaDto.PerguntaDto.RespostaDto> mapearRespostastoResposta(List<Resposta> respostas, Integer idRespostaCerta) {
+        List<QuestionarioRespostaDto.PerguntaDto.RespostaDto> respostasMapeadas = new ArrayList<>();
+        respostas.forEach(resposta -> {
+            respostasMapeadas.add(
+                    QuestionarioRespostaDto.PerguntaDto.RespostaDto.builder()
+                            .resposta(resposta.getResposta())
+                            .respostaCerta(resposta.getId().equals(idRespostaCerta))
+                            .build()
+            );
+        });
+        return respostasMapeadas;
     }
 }
