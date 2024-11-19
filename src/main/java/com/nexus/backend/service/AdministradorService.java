@@ -3,15 +3,14 @@ package com.nexus.backend.service;
 import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
-import com.nexus.backend.entities.Professor;
+import com.nexus.backend.entities.Administrador;
 import com.nexus.backend.entities.Usuario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.mappers.UsuarioMapper;
-import com.nexus.backend.repositories.ProfessorRepository;
+import com.nexus.backend.repositories.AdministradorRepository;
+import com.nexus.backend.repositories.AssociadoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,26 +23,27 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProfessorService {
-
-    private final ProfessorRepository professorRepository;
+public class AdministradorService {
+    private final AdministradorRepository administradorRepository;
+    private final AssociadoRepository associadoRepository;
     private final PasswordEncoder passwordEncoder;
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
     private final AuthenticationManager authenticationManager;
 
-    public List<Professor> getAprovadoFalse(){
-        return professorRepository.findByAprovadoFalse();
-    }
-    public List<Professor> getAprovadoTrue(){
-        return professorRepository.findByAprovadoTrue();
-    }
-    public List<Professor> getAll() {
-        return professorRepository.findAll();
+    public List<Administrador> getAll() {
+        return administradorRepository.findAll();
     }
 
-    public Professor getById(Integer id) {
-        return professorRepository.findById(id).orElseThrow(()
+    public Administrador getById(Integer id) {
+        return administradorRepository.findById(id).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public Administrador register(Administrador admin) {
+        String senhaCript = passwordEncoder.encode(admin.getSenha());
+        admin.setSenha(senhaCript);
+        admin.setId(null);
+        return administradorRepository.save(admin);
     }
 
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
@@ -54,7 +54,7 @@ public class ProfessorService {
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         Usuario usuarioAutenticado =
-                professorRepository.findByEmail(usuarioLoginDto.getEmail())
+                administradorRepository.findByEmail(usuarioLoginDto.getEmail())
                         .orElseThrow(
                                 () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
                         );
@@ -66,24 +66,18 @@ public class ProfessorService {
         return UsuarioMapper.of(usuarioAutenticado, token);
     }
 
-    public Professor register(Professor p) {
-        String senhaCript = passwordEncoder.encode(p.getSenha());
-        p.setSenha(senhaCript);
-        p.setId(null);
-        return professorRepository.save(p);
-    }
+    public Administrador update(Integer id, Administrador admin) {
+        if (!administradorRepository.existsById(id)) throw new EntityNotFoundException("Associado");
 
-    public Professor update(Integer id, Professor p) {
-        if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
-
-        p.setId(id);
-        return professorRepository.save(p);
+        admin.setId(id);
+        String senhaCript = passwordEncoder.encode(admin.getSenha());
+        admin.setSenha(senhaCript);
+        return administradorRepository.save(admin);
     }
 
     public void delete(Integer id) {
-        if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
+        if (!administradorRepository.existsById(id)) throw new  EntityNotFoundException("Associado");
 
-        professorRepository.deleteById(id);
+        administradorRepository.deleteById(id);
     }
-
 }
