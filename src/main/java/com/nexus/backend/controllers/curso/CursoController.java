@@ -69,6 +69,18 @@ public class CursoController {
         return ResponseEntity.ok(cursosMapeados);
     }
 
+    @GetMapping("/associado/{idAssociado}")
+    public ResponseEntity<List<CursoRespostaDto>> listarPorAssociado(@PathVariable Integer idAssociado) {
+        List<Curso> cursosEncontrados = cursoService.listarPorAssociado(idAssociado);
+        if (cursosEncontrados.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<CursoRespostaDto> cursosMapeados = cursosEncontrados.stream()
+                .map(CursoMapper::toRespostaDto)
+                .toList();
+
+        return ResponseEntity.ok(cursosMapeados);
+    }
+
     @PatchMapping("/titulo/{idCurso}/{titulo}")
     public ResponseEntity<String> alterarTitulo(
             @PathVariable Integer idCurso,

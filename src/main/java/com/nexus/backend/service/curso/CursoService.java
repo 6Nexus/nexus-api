@@ -14,6 +14,7 @@ import java.util.List;
 public class CursoService {
     private final CursoRepository cursoRepository;
     private final ProfessorService professorService;
+    private final MatriculaService matriculaService;
 
     public List<Curso> listar() {
         return cursoRepository.findAll();
@@ -25,6 +26,12 @@ public class CursoService {
 
     public List<Curso> listarPorProfessor(Integer professorId) {
         return cursoRepository.findAllByProfessorId(professorId);
+    }
+
+    public List<Curso> listarPorAssociado(Integer idAssociado) {
+        List<Integer> idsCursosARetornar = matriculaService.idCursosMatriculados(idAssociado);
+
+        return cursoRepository.findAllByIdIn(idsCursosARetornar);
     }
 
     public Integer cadastrar(Curso curso, Integer idProfessor) {
