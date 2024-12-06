@@ -39,11 +39,16 @@ public class AssociadoService {
     }
 
     public Associado register(Associado a) {
+        if(associadoRepository.existsByEmail(a.getEmail())) {
+            throw new EntityNotFoundException("Email já existe");
+        }
+
         String senhaCript = passwordEncoder.encode(a.getSenha());
         a.setSenha(senhaCript);
         a.setId(null);
         return associadoRepository.save(a);
     }
+
 
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
 

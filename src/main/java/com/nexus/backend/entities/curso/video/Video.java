@@ -27,4 +27,16 @@ public class Video {
 
     @ManyToOne
     private Modulo modulo;
+
+    public Video(Integer id, String titulo, String descricao, Integer ordem, Boolean carregadoNoYoutube, String path, String youtubeUrl, LocalDateTime criadoEm) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.ordem = ordem;
+        this.carregadoNoYoutube = carregadoNoYoutube;
+        this.path = path;
+        this.youtubeUrl = youtubeUrl;
+        this.criadoEm = criadoEm;
+    }
+
 }

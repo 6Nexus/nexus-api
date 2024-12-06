@@ -22,4 +22,13 @@ public class AssociadoRespostaDto {
 
     private String endereco;
     private String grauParentescoComDesaparecido;
+
+    public AssociadoRespostaDto(Integer id, String nome, String email, String telefone, String endereco, String grauParentescoComDesaparecido) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.grauParentescoComDesaparecido = grauParentescoComDesaparecido;
+    }
 }

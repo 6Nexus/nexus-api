@@ -23,4 +23,5 @@ public class AssociadoCriacaoDto extends UsuarioDto {
     private String endereco;
     private String grauParentescoComDesaparecido;
 
+
 }

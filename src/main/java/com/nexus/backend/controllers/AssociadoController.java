@@ -42,6 +42,7 @@ public class AssociadoController {
 
         return ResponseEntity.status(200).body(usuarioTokenDto);
     }
+
     // Cadastrar associado
     @Operation(summary = "Este endpoint permite a criação de um novo associado no sistema.")
     @PostMapping

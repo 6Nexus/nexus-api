@@ -9,4 +9,12 @@ public class UsuarioTokenDto {
     private String nome;
     private String email;
     private String token;
+
+    public UsuarioTokenDto(String tokenGerado, String mail) {
+        this.token = tokenGerado;
+        this.email = mail;
+    }
+
+    public UsuarioTokenDto() {
+    }
 }
