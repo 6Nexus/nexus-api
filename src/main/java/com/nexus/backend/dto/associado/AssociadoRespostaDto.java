@@ -23,6 +23,9 @@ public class AssociadoRespostaDto {
     private String endereco;
     private String grauParentescoComDesaparecido;
 
+    public AssociadoRespostaDto() {
+    }
+
     public AssociadoRespostaDto(Integer id, String nome, String email, String telefone, String endereco, String grauParentescoComDesaparecido) {
         this.id = id;
         this.nome = nome;

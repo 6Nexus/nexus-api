@@ -43,6 +43,10 @@ public class AssociadoService {
             throw new EntityNotFoundException("Email já existe");
         }
 
+        if(associadoRepository.existsByCpf(a.getCpf())) {
+            throw new EntityNotFoundException("CPF já existe");
+        }
+
         String senhaCript = passwordEncoder.encode(a.getSenha());
         a.setSenha(senhaCript);
         a.setId(null);

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -40,9 +41,6 @@ class AssociadoControllerTest {
 
     @InjectMocks
     private AssociadoController associadoController;
-
-    private UsuarioLoginDto usuarioLoginDto;
-    private UsuarioTokenDto usuarioTokenDto;
 
 
     @Test
@@ -169,7 +167,7 @@ class AssociadoControllerTest {
     @Test
     @DisplayName("Dado que, ao atualizar um associado com dados válidos, a resposta retorna com status 201 CREATED e dados atualizados")
     void atualizarAssociado_DeveRetornarCriado_QuandoDadosValidos() {
-        // Dado (GIVEN) - Usando o builder do Lombok para criar o DTO com dados válidos
+
         AssociadoCriacaoDto associadoCriacaoDto = AssociadoCriacaoDto.builder()
                 .nome("João Atualizado")
                 .email("joaoatualizado@email.com")
@@ -181,29 +179,22 @@ class AssociadoControllerTest {
                 .grauParentescoComDesaparecido("Novo grau de parentesco")
                 .build();
 
-        // Criando o objeto associado simulado para o mock
         Associado associado = new Associado();
         associado.setId(1);
         associado.setNome("João Atualizado");
         associado.setEmail("joaoatualizado@email.com");
         associado.setEndereco("Rua Y");
 
-        // Criando o DTO de resposta esperado
         AssociadoRespostaDto associadoRespostaDto = new AssociadoRespostaDto(1, "João Atualizado", "joaoatualizado@email.com", "987654321", "Rua Y", "Novo grau de parentesco");
 
-        // Mockando o comportamento do Mapper para simular a conversão do DTO
         when(associadoMapper.toCriacaoEntity(any(AssociadoCriacaoDto.class))).thenReturn(associado);
 
-        // Mockando o serviço para retornar o associado atualizado
         when(associadoService.update(eq(1), any(Associado.class))).thenReturn(associado);
 
-        // Mockando o comportamento do Mapper para retornar o DTO de resposta
         when(associadoMapper.toRespostaDto(any(Associado.class))).thenReturn(associadoRespostaDto);
 
-        // Quando (WHEN) - Realizando o request para o controlador
         ResponseEntity<AssociadoRespostaDto> response = associadoController.atualizarAssociado(1, associadoCriacaoDto);
 
-        // Então (THEN) - Verificando se o código de status da resposta é 201 (CREATED)
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody(), "O corpo da resposta não pode ser nulo");
         assertEquals("João Atualizado", response.getBody().getNome());
@@ -212,5 +203,77 @@ class AssociadoControllerTest {
         assertEquals("987654321", response.getBody().getTelefone());
         assertEquals("Novo grau de parentesco", response.getBody().getGrauParentescoComDesaparecido());
     }
+
+
+    @Test
+    @DisplayName("dado que, buscarPorId retorne associado corretamente")
+    void buscarPorIdCorretamente() {
+        // GIVEN
+        int idInformado = 1;
+        Associado associado = new Associado();
+        associado.setId(1);
+        associado.setNome("Teste Associado");
+
+        AssociadoRespostaDto associadoRespostaDto = new AssociadoRespostaDto();
+        associadoRespostaDto.setId(1);
+        associadoRespostaDto.setNome("Teste Associado");
+
+        // WHEN
+        Mockito.when(associadoService.getById(idInformado)).thenReturn(associado);
+        Mockito.when(associadoMapper.toRespostaDto(associado)).thenReturn(associadoRespostaDto);
+
+        ResponseEntity<AssociadoRespostaDto> resultado = associadoController.buscarPorId(idInformado);
+
+        // THEN
+        assertNotNull(resultado.getBody());
+        assertEquals(HttpStatus.OK, resultado.getStatusCode());
+        assertEquals(associadoRespostaDto, resultado.getBody());
+    }
+
+    @Test
+    @DisplayName("dado que, buscarPorId não tenha por id informado, lança exception")
+    void buscarPorIdIncorretamente() {
+        // GIVEN
+        int idInformado = 1;
+
+        // WHEN
+        Mockito.when(associadoService.getById(idInformado))
+                .thenThrow(new EntityNotFoundException("Associado"));
+
+        // THEN
+        assertThrows(EntityNotFoundException.class,
+                () -> associadoController.buscarPorId(idInformado));
+    }
+
+    @Test
+    @DisplayName("dado que, deletarAssociado remove corretamente o associado")
+    void deletarAssociadoCorretamente() {
+        // GIVEN
+        int idInformado = 1;
+
+        // WHEN
+        Mockito.doNothing().when(associadoService).delete(idInformado);
+
+        ResponseEntity<Void> resultado = associadoController.deletarAssociado(idInformado);
+
+        // THEN
+        assertEquals(HttpStatus.NO_CONTENT, resultado.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("dado que, deletarAssociado não encontre o ID, lança exception")
+    void deletarAssociadoIncorretamente() {
+        // GIVEN
+        int idInformado = 1;
+
+        // WHEN
+        Mockito.doThrow(new EntityNotFoundException("Associado"))
+                .when(associadoService).delete(idInformado);
+
+        // THEN
+        assertThrows(EntityNotFoundException.class,
+                () -> associadoController.deletarAssociado(idInformado));
+    }
+
 
 }
