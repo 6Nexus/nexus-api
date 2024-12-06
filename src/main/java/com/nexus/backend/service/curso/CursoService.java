@@ -5,6 +5,7 @@ import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.CursoRepository;
 import com.nexus.backend.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,6 @@ import java.util.List;
 public class CursoService {
     private final CursoRepository cursoRepository;
     private final ProfessorService professorService;
-    private final MatriculaService matriculaService;
 
     public List<Curso> listar() {
         return cursoRepository.findAll();
@@ -28,10 +28,8 @@ public class CursoService {
         return cursoRepository.findAllByProfessorId(professorId);
     }
 
-    public List<Curso> listarPorAssociado(Integer idAssociado) {
-        List<Integer> idsCursosARetornar = matriculaService.idCursosMatriculados(idAssociado);
-
-        return cursoRepository.findAllByIdIn(idsCursosARetornar);
+    public List<Curso> listarPorIds(List<Integer> idsCursos) {
+        return cursoRepository.findAllByIdIn(idsCursos);
     }
 
     public Integer cadastrar(Curso curso, Integer idProfessor) {

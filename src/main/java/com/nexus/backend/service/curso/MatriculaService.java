@@ -1,5 +1,6 @@
 package com.nexus.backend.service.curso;
 
+import com.nexus.backend.entities.curso.Curso;
 import com.nexus.backend.entities.curso.Matricula;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.MatriculaRepository;
@@ -28,15 +29,23 @@ public class MatriculaService {
 
     public List<Integer> idCursosMatriculados(Integer idAssociado) {
         return matriculaRepository.findAllByAssociadoId(idAssociado).stream()
-                .map(Matricula::getId)
+                .map(matricula -> {
+                    return matricula.getCurso().getId();
+                })
                 .collect(Collectors.toList());
     }
 
-    public Integer buscarPorIds(Integer idAssociado, Integer idCurso) {
-        Optional<Matricula> matriculaEncontrada = matriculaRepository.findByAssociadoIdAndCursoId(idCurso, idAssociado);
+    public Integer buscarPorAssociadoECurso(Integer idAssociado, Integer idCurso) {
+        Optional<Matricula> matriculaEncontrada = matriculaRepository.findByAssociadoIdAndCursoId(idAssociado, idCurso);
 
         if (matriculaEncontrada.isEmpty()) throw new EntityNotFoundException("Matrícula");
 
         return matriculaEncontrada.get().getId();
+    }
+
+    public Matricula buscarPorId(Integer idMatricula) {
+        return matriculaRepository.findById(idMatricula).orElseThrow(
+                () -> new EntityNotFoundException("Matrícula")
+        );
     }
 }

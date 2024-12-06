@@ -3,8 +3,11 @@ package com.nexus.backend.controllers.curso;
 import com.nexus.backend.dto.curso.curso.CursoCriacaoDto;
 import com.nexus.backend.dto.curso.curso.CursoRespostaDto;
 import com.nexus.backend.entities.curso.Curso;
+import com.nexus.backend.entities.curso.Matricula;
 import com.nexus.backend.mappers.curso.CursoMapper;
+import com.nexus.backend.service.curso.CertificadoService;
 import com.nexus.backend.service.curso.CursoService;
+import com.nexus.backend.service.curso.MatriculaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CursoController {
     private final CursoService cursoService;
+    private final MatriculaService matriculaService;
+    private final CertificadoService certificadoService;
 
     @PostMapping
     public ResponseEntity<Integer> cadastrar(@RequestBody @Valid CursoCriacaoDto cursoCriacaoDto) {
@@ -69,12 +74,34 @@ public class CursoController {
         return ResponseEntity.ok(cursosMapeados);
     }
 
+    private List<Curso> cursosDoAssociado(Integer idAssociado) {
+        List<Integer> idsCursosMatriculados = matriculaService.idCursosMatriculados(idAssociado);
+        List<Curso> cursosEncontrados = cursoService.listarPorIds(idsCursosMatriculados);
+
+        return cursosEncontrados;
+    }
+
     @GetMapping("/associado/{idAssociado}")
     public ResponseEntity<List<CursoRespostaDto>> listarPorAssociado(@PathVariable Integer idAssociado) {
-        List<Curso> cursosEncontrados = cursoService.listarPorAssociado(idAssociado);
-        if (cursosEncontrados.isEmpty()) return ResponseEntity.noContent().build();
+        List<Curso> cursosDoAssociadoEncontrados = cursosDoAssociado(idAssociado);
+        if (cursosDoAssociadoEncontrados.isEmpty()) return ResponseEntity.noContent().build();
 
-        List<CursoRespostaDto> cursosMapeados = cursosEncontrados.stream()
+        List<CursoRespostaDto> cursosMapeados = cursosDoAssociadoEncontrados.stream()
+                .map(CursoMapper::toRespostaDto)
+                .toList();
+
+        return ResponseEntity.ok(cursosMapeados);
+    }
+
+    @GetMapping("/associado/{idAssociado}/certificados")
+    public ResponseEntity<List<CursoRespostaDto>> listarPorAssociadoCertificados(@PathVariable Integer idAssociado) {
+        List<Curso> cursosDoAssociadoEncontrados = cursosDoAssociado(idAssociado);
+        if (cursosDoAssociadoEncontrados.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<Curso> cursosdoAssociadoCertificados = certificadoService.certificadosDisponiveis(idAssociado, cursosDoAssociadoEncontrados);
+        if (cursosdoAssociadoCertificados.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<CursoRespostaDto> cursosMapeados = cursosdoAssociadoCertificados.stream()
                 .map(CursoMapper::toRespostaDto)
                 .toList();
 

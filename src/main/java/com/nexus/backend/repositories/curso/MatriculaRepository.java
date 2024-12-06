@@ -10,5 +10,5 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Integer> {
 
     List<Matricula> findAllByAssociadoId(Integer idAssociado);
 
-    Optional<Matricula> findByAssociadoIdAndCursoId(Integer idCurso, Integer idAssociado);
+    Optional<Matricula> findByAssociadoIdAndCursoId(Integer idAssociado, Integer idCurso);
 }

@@ -41,6 +41,12 @@ public class ModuloService {
         moduloRepository.save(modulo02);
     }
 
+    public Integer qtdModulosPorCurso(Integer idCurso) {
+        return moduloRepository.countByCursoId(idCurso).orElseThrow(
+                () -> new EntityNotFoundException("Módulo")
+        );
+    }
+
     public void deletar(Integer idModulo) {
         if (!moduloRepository.existsById(idModulo)) throw new EntityNotFoundException("Módulo");
 

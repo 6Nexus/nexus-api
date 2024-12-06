@@ -1,13 +1,6 @@
 package com.nexus.backend.controllers.curso;
 
-import com.nexus.backend.dto.curso.curso.CursoRespostaDto;
 import com.nexus.backend.dto.curso.matricula.MatriculaCriacaoDto;
-import com.nexus.backend.dto.curso.modulo.ModuloCriacaoDto;
-import com.nexus.backend.entities.curso.Curso;
-import com.nexus.backend.entities.curso.Matricula;
-import com.nexus.backend.entities.curso.Modulo;
-import com.nexus.backend.mappers.curso.CursoMapper;
-import com.nexus.backend.mappers.curso.ModuloMapper;
 import com.nexus.backend.service.curso.MatriculaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +22,7 @@ public class MatriculaController {
 
     @GetMapping("/{idAssociado}/{idCurso}")
     public ResponseEntity<Integer> listarPorId(@PathVariable Integer idAssociado, @PathVariable Integer idCurso) {
-        Integer matriculaEncontrada = matriculaService.buscarPorIds(idAssociado, idCurso);
+        Integer matriculaEncontrada = matriculaService.buscarPorAssociadoECurso(idAssociado, idCurso);
 
         return ResponseEntity.ok(matriculaEncontrada);
     }
