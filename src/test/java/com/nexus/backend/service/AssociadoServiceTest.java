@@ -1,8 +1,7 @@
 package com.nexus.backend.service;
 
-import com.nexus.backend.dto.usuario.UsuarioLoginDto;
+
 import com.nexus.backend.entities.Associado;
-import com.nexus.backend.entities.Usuario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.AssociadoRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,15 +12,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes unitários da AssociadoService")
 class AssociadoServiceTest {
 
-    @Mock // dublê - a nossa "repository" vai ser um dublê
+    @Mock
     private AssociadoRepository associadoRepository;
 
     @InjectMocks
@@ -43,7 +41,7 @@ class AssociadoServiceTest {
         associadoSalvo.setId(1);
         associadoSalvo.setNome("João");
         associadoSalvo.setEmail("joao@email.com");
-        associadoSalvo.setSenha("senhaCriptografada"); // Mock retorna isso
+        associadoSalvo.setSenha("senhaCriptografada");
 
         // WHEN
         Mockito.when(associadoRepository.existsByEmail(associadoParaRegistrar.getEmail())).thenReturn(false);
@@ -55,10 +53,9 @@ class AssociadoServiceTest {
         // THEN
         assertEquals(associadoSalvo.getId(), resultado.getId());
         assertEquals(associadoSalvo.getEmail(), resultado.getEmail());
-        assertEquals("senhaCriptografada", resultado.getSenha()); // A senha criptografada deve ser igual ao mock
-
+        assertEquals("senhaCriptografada", resultado.getSenha());
         Mockito.verify(associadoRepository, Mockito.times(1)).existsByEmail(associadoParaRegistrar.getEmail());
-        Mockito.verify(passwordEncoder, Mockito.times(1)).encode("senha123"); // A senha original que foi passada
+        Mockito.verify(passwordEncoder, Mockito.times(1)).encode("senha123");
         Mockito.verify(associadoRepository, Mockito.times(1)).save(Mockito.any(Associado.class));
     }
 
@@ -90,17 +87,17 @@ class AssociadoServiceTest {
         associadoParaRegistrar.setId(1);
         associadoParaRegistrar.setNome("João");
         associadoParaRegistrar.setEmail("joao@email.com");
-        associadoParaRegistrar.setCpf("123.456.789-00");  // Definindo o CPF
+        associadoParaRegistrar.setCpf("123.456.789-00");
         associadoParaRegistrar.setSenha("senha123");
 
         // WHEN
-        Mockito.when(associadoRepository.existsByCpf(associadoParaRegistrar.getCpf())).thenReturn(true);  // Verifica se o CPF já existe no sistema
+        Mockito.when(associadoRepository.existsByCpf(associadoParaRegistrar.getCpf())).thenReturn(true);
 
         // THEN
         assertThrows(EntityNotFoundException.class, () -> associadoService.register(associadoParaRegistrar));
 
-        Mockito.verify(associadoRepository, Mockito.times(1)).existsByCpf(associadoParaRegistrar.getCpf());  // Verifica se a checagem do CPF foi feita
-        Mockito.verify(associadoRepository, Mockito.never()).save(Mockito.any(Associado.class));  // Verifica se o save não foi chamado
+        Mockito.verify(associadoRepository, Mockito.times(1)).existsByCpf(associadoParaRegistrar.getCpf());
+        Mockito.verify(associadoRepository, Mockito.never()).save(Mockito.any(Associado.class));
     }
 
 
@@ -188,4 +185,5 @@ class AssociadoServiceTest {
         Mockito.verify(associadoRepository, Mockito.times(1)).existsById(id);
         Mockito.verify(associadoRepository, Mockito.never()).deleteById(id);
     }
+
 }

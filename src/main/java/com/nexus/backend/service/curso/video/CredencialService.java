@@ -23,7 +23,7 @@ public class CredencialService {
     private static final Collection<String> SCOPES = Collections.singletonList("https://www.googleapis.com/auth/youtube.upload");
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-    public static Credential autorizarYoutube() throws Exception {
+    public Credential autorizarYoutube() throws Exception {
         InputStream in = new FileInputStream(CLIENT_SECRETS);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 

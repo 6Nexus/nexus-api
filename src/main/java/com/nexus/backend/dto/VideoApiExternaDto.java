@@ -26,6 +26,8 @@ public class VideoApiExternaDto {
         @JsonProperty("statistics")
         private Statistics statistics;
 
+
+
         public Statistics getStatistics() {
             return statistics;
         }
@@ -45,6 +47,12 @@ public class VideoApiExternaDto {
 
         @JsonProperty("commentCount")
         private String commentCount;
+
+        public Statistics(String viewCount, String likeCount, String commentCount) {
+            this.viewCount = viewCount;
+            this.likeCount = likeCount;
+            this.commentCount = commentCount;
+        }
 
         public String getViewCount() {
             return viewCount;

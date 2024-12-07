@@ -275,5 +275,4 @@ class AssociadoControllerTest {
                 () -> associadoController.deletarAssociado(idInformado));
     }
 
-
 }
