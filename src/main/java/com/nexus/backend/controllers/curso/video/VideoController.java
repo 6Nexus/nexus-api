@@ -1,5 +1,7 @@
 package com.nexus.backend.controllers.curso.video;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexus.backend.dto.curso.curso.CursoCriacaoDto;
 import com.nexus.backend.dto.curso.modulo.ModuloRespostaDto;
 import com.nexus.backend.dto.curso.video.VideoCriacaoDto;
@@ -16,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,10 +28,21 @@ import java.util.List;
 public class VideoController {
     private final VideoService videoService;
 
+//  upload de video no servidor
     @PostMapping
-    public ResponseEntity<Integer> cadastrar(@RequestBody @Valid VideoCriacaoDto videoCriacaoDto) {
-        Video videoEntrada = VideoMapper.toEntidade(videoCriacaoDto);
-        Integer idVideoSalvo = videoService.cadastrar(videoEntrada, videoCriacaoDto.getIdModulo());
+    public ResponseEntity<Integer> cadastrar(@RequestParam("json") String json,
+                                             @RequestParam("arquivo") MultipartFile file) {
+        Integer idVideoSalvo = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            VideoCriacaoDto videoGeradoDoJson = objectMapper.readValue(json, VideoCriacaoDto.class);
+
+            Video videoEntrada = VideoMapper.toEntidade(videoGeradoDoJson);
+
+            idVideoSalvo = videoService.cadastrar(videoEntrada, videoGeradoDoJson.getIdModulo(), file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return ResponseEntity.created(null).body(idVideoSalvo);
     }
@@ -45,11 +59,9 @@ public class VideoController {
         return ResponseEntity.ok(videosMapeados);
     }
 
-    @DeleteMapping("/{idVideo}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer idVideo) {
-        videoService.deletar(idVideo);
+    @PostMapping("/force-cron")
+    public ResponseEntity<Void> rodarCron() {
+        videoService.cronCarregamentoYoutube();
         return ResponseEntity.noContent().build();
     }
-
-
 }

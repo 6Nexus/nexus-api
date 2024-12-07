@@ -12,13 +12,23 @@ import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.video.VideoRepository;
 import com.nexus.backend.service.curso.ModuloService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,42 +38,55 @@ public class VideoService {
     private final CredencialService credencialService;
 
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private Path diretorioBase = Path.of(System.getProperty("user.dir") + "/arquivos");
 
     public List<Video> listarPorModulo(Integer idModulo) {
         return videoRepository.findByModuloIdOrderByOrdemAsc(idModulo);
     }
 
-    public Integer cadastrar(Video video, Integer idModulo) {
+    private String formatarNomeArquivo(String nomeOriginal) {
+        return String.format("%s_%s", UUID.randomUUID(), nomeOriginal);
+    }
+
+    public Integer cadastrar(Video video, Integer idModulo, MultipartFile file) {
+        if (file.isEmpty()) throw new ResponseStatusException(400, "Nenhum arquivo enviado", null);
+        if (!this.diretorioBase.toFile().exists()) this.diretorioBase.toFile().mkdir();
+
+        String nomeArquivoFormatado = formatarNomeArquivo(file.getOriginalFilename());
+        String filePath = this.diretorioBase + "/" + nomeArquivoFormatado;
+        File destino = new File(filePath);
+        try {
+            file.transferTo(destino);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(422, "Não foi possível salvar o arquivo", null);
+        }
+
+        video.setPath(filePath);
+        video.setCriadoEm(LocalDateTime.now());
         video.setModulo(moduloService.buscarPorId(idModulo));
-        Video videoCadastrado = videoRepository.save(video);
-        return carregamentoYoutubeManual(videoCadastrado);
+        return videoRepository.save(video).getId();
     }
 
     @Scheduled(cron = "0 0 1 * * *")
     public void cronCarregamentoYoutube(){
-        List<Video> videosDoDia = videoRepository.findTop5ByCriadoEmFalseOrderByCriadoEmAsc();
+        List<Video> videosDoDia = videoRepository.findTop5BycarregadoNoYoutubeFalseOrderByCriadoEmAsc();
         if (!videosDoDia.isEmpty()){
             videosDoDia.stream()
                     .forEach(video -> {
+                        String urlDoVideo = "";
                         try {
-                            video.setYoutubeUrl(carregarVideo(video));
+                            urlDoVideo = carregarVideo(video);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                        video.setCarregadoNoYoutube(true);
+                        if (!urlDoVideo.isEmpty()) {
+                            video.setYoutubeUrl(urlDoVideo);
+                            video.setCarregadoNoYoutube(true);
+                            deletarDoServidor(videoRepository.save(video));
+                        }
                     });
         }
-    }
-
-    public Integer carregamentoYoutubeManual(Video video){
-        try {
-            video.setYoutubeUrl(carregarVideo(video));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        video.setCarregadoNoYoutube(true);
-        video.setPath(null);
-        return videoRepository.save(video).getId();
     }
 
     public String carregarVideo(Video video) throws Exception {
@@ -75,7 +98,7 @@ public class VideoService {
 
         com.google.api.services.youtube.model.Video videoACarregar = new com.google.api.services.youtube.model.Video();
         VideoStatus status = new VideoStatus();
-        status.setPrivacyStatus("private");
+        status.setPrivacyStatus("unlisted");
         videoACarregar.setStatus(status);
 
         VideoSnippet snippet = new VideoSnippet();
@@ -95,10 +118,16 @@ public class VideoService {
         return videoCarregado.getId();
     }
 
-    public void deletar(Integer idVideo) {
-        if (!videoRepository.existsById(idVideo)) throw new EntityNotFoundException("Vídeo");
-
-        //Apagar o vídeo do armazenamento
-        videoRepository.deleteById(idVideo);
+    public void deletarDoServidor(Video video) {
+        Path caminhoDoArquivo = Path.of(video.getPath());
+        try {
+            Files.delete(caminhoDoArquivo);
+        } catch (NoSuchFileException e) {
+            System.out.println("O arquivo não existe!");
+        } catch (DirectoryNotEmptyException e) {
+            System.out.println("O diretório não está vazio!");
+        } catch (IOException e) {
+            System.out.println("Erro ao tentar apagar o arquivo: " + e.getMessage());
+        }
     }
 }

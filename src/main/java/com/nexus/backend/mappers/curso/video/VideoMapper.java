@@ -15,8 +15,6 @@ public class VideoMapper {
                 .descricao(dto.getDescricao())
                 .ordem(dto.getOrdem())
                 .carregadoNoYoutube(false)
-                .path(dto.getPath())
-                .criadoEm(LocalDateTime.now())
                 .build();
     }
 

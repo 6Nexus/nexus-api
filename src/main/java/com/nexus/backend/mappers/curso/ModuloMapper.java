@@ -7,13 +7,17 @@ import com.nexus.backend.dto.curso.modulo.ModuloRespostaDto;
 import com.nexus.backend.entities.curso.Curso;
 import com.nexus.backend.entities.curso.Modulo;
 
+import java.time.LocalDateTime;
+
 public class ModuloMapper {
     public static Modulo toEntidade(ModuloCriacaoDto dto) {
         if (dto == null) return null;
 
         return Modulo.builder()
                 .titulo(dto.getTitulo())
+                .descricao(dto.getDescricao())
                 .ordem(dto.getOrdem())
+                .criadoEm(LocalDateTime.now())
                 .build();
     }
 
@@ -23,7 +27,9 @@ public class ModuloMapper {
         return ModuloRespostaDto.builder()
                 .id(modulo.getId())
                 .titulo(modulo.getTitulo())
+                .descricao(modulo.getDescricao())
                 .ordem(modulo.getOrdem())
+                .criadoEm(modulo.getCriadoEm())
                 .build();
     }
 }

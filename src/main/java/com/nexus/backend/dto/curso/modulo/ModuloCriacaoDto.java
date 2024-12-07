@@ -9,6 +9,8 @@ import lombok.Data;
 public class ModuloCriacaoDto {
     @NotBlank
     private String titulo;
+    @NotBlank
+    private String descricao;
     @NotNull
     private Integer ordem;
     @Positive @NotNull

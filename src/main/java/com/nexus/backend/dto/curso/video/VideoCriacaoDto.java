@@ -13,8 +13,6 @@ public class VideoCriacaoDto {
     private String descricao;
     @Positive @NotNull
     private Integer ordem;
-    @NotBlank
-    private String path;
     @Positive @NotNull
     private Integer idModulo;
 }
