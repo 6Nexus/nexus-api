@@ -5,10 +5,15 @@ import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Administrador;
 import com.nexus.backend.entities.Usuario;
+import com.nexus.backend.entities.curso.video.Video;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.mappers.UsuarioMapper;
 import com.nexus.backend.repositories.AdministradorRepository;
 import com.nexus.backend.repositories.AssociadoRepository;
+import com.nexus.backend.repositories.curso.video.VideoRepository;
+import com.nexus.backend.util.IO;
+import com.nexus.backend.util.strategy.IOrdenacao;
+import com.nexus.backend.util.strategy.QuickSort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -29,6 +35,19 @@ public class AdministradorService {
     private final PasswordEncoder passwordEncoder;
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
     private final AuthenticationManager authenticationManager;
+    private final VideoRepository videoRepository;
+
+//    public List<Video> gerarCsv(){
+////        List<Video> videos =  videoRepository.findAll();
+////        IOrdenacao<Video> quickSort = new QuickSort<>();
+////        Comparator<Video> comparador = Comparator.comparing(Video::getViews);
+////        quickSort.ordenar(videos, comparador);
+////
+////        IO export = new IO();
+////        export.export(videos);
+////
+////        return videoRepository.findAll();
+//    }
 
     public List<Administrador> getAll() {
         return administradorRepository.findAll();
