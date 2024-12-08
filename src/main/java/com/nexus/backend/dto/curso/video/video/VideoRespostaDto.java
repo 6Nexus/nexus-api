@@ -1,4 +1,4 @@
-package com.nexus.backend.dto.curso.video;
+package com.nexus.backend.dto.curso.video.video;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

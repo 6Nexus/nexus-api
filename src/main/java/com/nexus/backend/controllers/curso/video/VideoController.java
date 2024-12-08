@@ -1,20 +1,11 @@
 package com.nexus.backend.controllers.curso.video;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nexus.backend.dto.curso.curso.CursoCriacaoDto;
-import com.nexus.backend.dto.curso.modulo.ModuloRespostaDto;
-import com.nexus.backend.dto.curso.video.VideoCriacaoDto;
-import com.nexus.backend.dto.curso.video.VideoRespostaDto;
-import com.nexus.backend.entities.curso.Curso;
-import com.nexus.backend.entities.curso.Modulo;
+import com.nexus.backend.dto.curso.video.video.VideoCriacaoDto;
+import com.nexus.backend.dto.curso.video.video.VideoRespostaDto;
 import com.nexus.backend.entities.curso.video.Video;
-import com.nexus.backend.mappers.curso.CursoMapper;
-import com.nexus.backend.mappers.curso.ModuloMapper;
 import com.nexus.backend.mappers.curso.video.VideoMapper;
-import com.nexus.backend.service.curso.CursoService;
 import com.nexus.backend.service.curso.video.VideoService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

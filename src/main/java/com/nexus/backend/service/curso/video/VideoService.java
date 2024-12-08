@@ -7,6 +7,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
+import com.nexus.backend.entities.curso.Matricula;
 import com.nexus.backend.entities.curso.video.Video;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.video.VideoRepository;
@@ -42,6 +43,12 @@ public class VideoService {
 
     public List<Video> listarPorModulo(Integer idModulo) {
         return videoRepository.findByModuloIdOrderByOrdemAsc(idModulo);
+    }
+
+    public Video buscarPorId(Integer videoId) {
+        return videoRepository.findById(videoId).orElseThrow(
+                () -> new EntityNotFoundException("Vídeo")
+        );
     }
 
     private String formatarNomeArquivo(String nomeOriginal) {
