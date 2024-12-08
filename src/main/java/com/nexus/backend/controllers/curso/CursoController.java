@@ -10,6 +10,7 @@ import com.nexus.backend.service.curso.CursoService;
 import com.nexus.backend.service.curso.MatriculaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,6 @@ import java.util.List;
 public class CursoController {
     private final CursoService cursoService;
     private final MatriculaService matriculaService;
-    private final CertificadoService certificadoService;
 
     @PostMapping
     public ResponseEntity<Integer> cadastrar(@RequestBody @Valid CursoCriacaoDto cursoCriacaoDto) {
@@ -29,6 +29,18 @@ public class CursoController {
         Integer idCursoSalvo = cursoService.cadastrar(cursoEntrada, cursoCriacaoDto.getIdProfessor());
 
         return ResponseEntity.created(null).body(idCursoSalvo);
+    }
+
+    @PatchMapping(value = "/capa/{cursoId}", consumes = "image/*")
+    public ResponseEntity<Void> patchCapa(@PathVariable Integer cursoId, @RequestBody byte[] capa) {
+        cursoService.cadastrarCapa(cursoId, capa);
+        return ResponseEntity.status(200).build();
+    }
+
+    @GetMapping(value = "/capa/{cursoId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getCapa(@PathVariable Integer cursoId) {
+        byte[] capa = cursoService.buscarCapaPorCursoId(cursoId);
+        return ResponseEntity.status(200).body(capa);
     }
 
     @GetMapping
@@ -87,21 +99,6 @@ public class CursoController {
         if (cursosDoAssociadoEncontrados.isEmpty()) return ResponseEntity.noContent().build();
 
         List<CursoRespostaDto> cursosMapeados = cursosDoAssociadoEncontrados.stream()
-                .map(CursoMapper::toRespostaDto)
-                .toList();
-
-        return ResponseEntity.ok(cursosMapeados);
-    }
-
-    @GetMapping("/associado/{idAssociado}/certificados")
-    public ResponseEntity<List<CursoRespostaDto>> listarPorAssociadoCertificados(@PathVariable Integer idAssociado) {
-        List<Curso> cursosDoAssociadoEncontrados = cursosDoAssociado(idAssociado);
-        if (cursosDoAssociadoEncontrados.isEmpty()) return ResponseEntity.noContent().build();
-
-        List<Curso> cursosdoAssociadoCertificados = certificadoService.certificadosDisponiveis(idAssociado, cursosDoAssociadoEncontrados);
-        if (cursosdoAssociadoCertificados.isEmpty()) return ResponseEntity.noContent().build();
-
-        List<CursoRespostaDto> cursosMapeados = cursosdoAssociadoCertificados.stream()
                 .map(CursoMapper::toRespostaDto)
                 .toList();
 

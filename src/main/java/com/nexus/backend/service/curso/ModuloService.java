@@ -6,6 +6,7 @@ import com.nexus.backend.repositories.curso.ModuloRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,6 +20,7 @@ public class ModuloService {
     }
 
     public Integer cadastrar(Modulo modulo, Integer cursoId) {
+        modulo.setCriadoEm(LocalDateTime.now());
         modulo.setCurso(cursoService.buscarPorId(cursoId));
         return moduloRepository.save(modulo).getId();
     }

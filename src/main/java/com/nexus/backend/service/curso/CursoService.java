@@ -37,6 +37,24 @@ public class CursoService {
         return cursoRepository.save(curso).getId();
     }
 
+    public void cadastrarCapa(Integer cursoId, byte[] capa) {
+        if (!cursoRepository.existsById(cursoId)) {
+            throw new EntityNotFoundException("Curso");
+        }
+
+        Curso cursoEncontrado = buscarPorId(cursoId);
+        cursoEncontrado.setCapa(capa);
+        cursoRepository.save(cursoEncontrado);
+    }
+
+    public byte[] buscarCapaPorCursoId(Integer cursoId) {
+        if (!cursoRepository.existsById(cursoId)) {
+            throw new EntityNotFoundException("Curso");
+        }
+
+        return buscarPorId(cursoId).getCapa();
+    }
+
     public Curso buscarPorId(Integer idCurso) {
         return cursoRepository.findById(idCurso).orElseThrow(
                 () -> new EntityNotFoundException("Curso")

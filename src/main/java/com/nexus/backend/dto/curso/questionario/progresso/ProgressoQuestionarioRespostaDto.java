@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class ProgressoQuestionarioRespostaDto {
     private Integer id;
     private Double pontuacao;
+    private LocalDateTime dataAtualizacao;
     private Integer matriculaId;
     private Integer questionarioId;
 }

@@ -5,6 +5,8 @@ import com.nexus.backend.entities.curso.Matricula;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -16,6 +18,7 @@ public class ProgressoQuestionario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Double pontuacao;
+    private LocalDateTime dataAtualizacao;
 
     @ManyToOne
     private Matricula matricula;

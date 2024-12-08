@@ -7,6 +7,8 @@ import com.nexus.backend.service.curso.MatriculaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +19,7 @@ public class ProgressoQuestionarioService {
     private final QuestionarioService questionarioService;
 
     public Integer cadastrar(ProgressoQuestionario progressoQuestionarioACadastrar, Integer matriculaId, Integer questionarioId) {
+        progressoQuestionarioACadastrar.setDataAtualizacao(LocalDateTime.now());
         progressoQuestionarioACadastrar.setMatricula(matriculaService.buscarPorId(matriculaId));
         progressoQuestionarioACadastrar.setQuestionario(questionarioService.buscarPorId(questionarioId));
 
@@ -31,6 +34,7 @@ public class ProgressoQuestionarioService {
 
     public Double atualizarPontuacao(Integer progressoId, Double novaPontuacao) {
         ProgressoQuestionario progressoCadastrado = buscarPorId(progressoId);
+        progressoCadastrado.setDataAtualizacao(LocalDateTime.now());
         progressoCadastrado.setPontuacao(novaPontuacao);
 
         return progressoQuestionarioRepository.save(progressoCadastrado).getPontuacao();
@@ -42,9 +46,7 @@ public class ProgressoQuestionarioService {
         );
     }
 
-    public Integer buscarPontuacaoPorMatricula(Integer matriculaId, Double pontuacao) {
-        return progressoQuestionarioRepository.countByMatriculaIdAndPontuacaoGreaterThan(matriculaId, pontuacao).orElseThrow(
-                () -> new EntityNotFoundException("Módulo")
-        );
+    public List<ProgressoQuestionario> buscarPorMatricula(Integer matriculaId) {
+        return progressoQuestionarioRepository.findByMatriculaId(matriculaId);
     }
 }

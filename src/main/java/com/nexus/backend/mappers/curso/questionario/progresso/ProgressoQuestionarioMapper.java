@@ -22,6 +22,7 @@ public class ProgressoQuestionarioMapper {
         return ProgressoQuestionarioRespostaDto.builder()
                 .id(progresso.getId())
                 .pontuacao(progresso.getPontuacao())
+                .dataAtualizacao(progresso.getDataAtualizacao())
                 .matriculaId(progresso.getMatricula().getId())
                 .questionarioId(progresso.getQuestionario().getId())
                 .build();

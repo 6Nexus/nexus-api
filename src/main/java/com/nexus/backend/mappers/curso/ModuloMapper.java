@@ -17,7 +17,6 @@ public class ModuloMapper {
                 .titulo(dto.getTitulo())
                 .descricao(dto.getDescricao())
                 .ordem(dto.getOrdem())
-                .criadoEm(LocalDateTime.now())
                 .build();
     }
 
