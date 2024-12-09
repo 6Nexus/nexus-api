@@ -1,8 +1,8 @@
 package com.nexus.backend.controllers;
 
-import com.nexus.backend.strategy.IOrdenacao;
-import com.nexus.backend.strategy.MergeSort;
-import com.nexus.backend.strategy.QuickSort;
+import com.nexus.backend.util.strategy.IOrdenacao;
+import com.nexus.backend.util.strategy.MergeSort;
+import com.nexus.backend.util.strategy.QuickSort;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

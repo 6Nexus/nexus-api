@@ -73,11 +73,5 @@ public class ProfessorController {
         return ResponseEntity.created(null).body(professorMapper.toRespostaDto(pSalvo));
     }
 
-    // Deletar professor
-    @Operation(summary = "Este endpoint deleta um professor do sistema")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProfessor(@PathVariable int id) {
-        professorService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }

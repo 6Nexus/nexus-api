@@ -28,7 +28,7 @@ public class ProfessorMapper extends UsuarioMapper<Professor, ProfessorCriacaoDt
         Professor professor = super.toEntity(dto);
         professor.setTipoUsuario(TipoUsuario.PROFESSOR);
         professor.setAreaAtuacao(dto.getAreaAtuacao());
-
+        professor.setAprovado(false);
         return professor;
     }
 }

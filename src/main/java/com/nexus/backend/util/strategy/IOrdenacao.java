@@ -1,4 +1,4 @@
-package com.nexus.backend.strategy;
+package com.nexus.backend.util.strategy;
 
 import java.util.Comparator;
 import java.util.List;
