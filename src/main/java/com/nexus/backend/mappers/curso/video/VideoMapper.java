@@ -1,10 +1,8 @@
 package com.nexus.backend.mappers.curso.video;
 
-import com.nexus.backend.dto.curso.video.VideoCriacaoDto;
-import com.nexus.backend.dto.curso.video.VideoRespostaDto;
+import com.nexus.backend.dto.curso.video.video.VideoCriacaoDto;
+import com.nexus.backend.dto.curso.video.video.VideoRespostaDto;
 import com.nexus.backend.entities.curso.video.Video;
-
-import java.time.LocalDateTime;
 
 public class VideoMapper {
     public static Video toEntidade(VideoCriacaoDto dto) {
@@ -15,8 +13,6 @@ public class VideoMapper {
                 .descricao(dto.getDescricao())
                 .ordem(dto.getOrdem())
                 .carregadoNoYoutube(false)
-                .path(dto.getPath())
-                .criadoEm(LocalDateTime.now())
                 .build();
     }
 

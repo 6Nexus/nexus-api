@@ -14,4 +14,6 @@ public class CursoRespostaDto {
     private String titulo;
     private String categoria;
     private String descricao;
+    private Integer professorId;
+    private String professorNome;
 }

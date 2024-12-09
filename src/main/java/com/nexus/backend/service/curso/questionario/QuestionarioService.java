@@ -1,5 +1,6 @@
 package com.nexus.backend.service.curso.questionario;
 
+import com.nexus.backend.entities.curso.Matricula;
 import com.nexus.backend.entities.curso.questionario.Questionario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.questionario.QuestionarioRepository;
@@ -19,7 +20,13 @@ public class QuestionarioService {
     }
 
     public Questionario buscarPorModulo(Integer idModulo) {
-        return questionarioRepository.findByModuloId(idModulo)
-                .orElseThrow(() -> new EntityNotFoundException("Questionário"));
+        return questionarioRepository.findByModuloId(idModulo).orElseThrow(
+                () -> new EntityNotFoundException("Questionário"));
+    }
+
+    public Questionario buscarPorId(Integer idQuestionario) {
+        return questionarioRepository.findById(idQuestionario).orElseThrow(
+                () -> new EntityNotFoundException("Questionário")
+        );
     }
 }

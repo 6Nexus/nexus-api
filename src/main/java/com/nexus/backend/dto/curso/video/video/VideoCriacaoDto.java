@@ -1,4 +1,4 @@
-package com.nexus.backend.dto.curso.video;
+package com.nexus.backend.dto.curso.video.video;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,8 +13,6 @@ public class VideoCriacaoDto {
     private String descricao;
     @Positive @NotNull
     private Integer ordem;
-    @NotBlank
-    private String path;
     @Positive @NotNull
     private Integer idModulo;
 }

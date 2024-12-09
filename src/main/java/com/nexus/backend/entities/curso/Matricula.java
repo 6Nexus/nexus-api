@@ -1,11 +1,8 @@
 package com.nexus.backend.entities.curso;
 
-import com.nexus.backend.entities.Professor;
+import com.nexus.backend.entities.Associado;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -13,14 +10,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Modulo {
+public class Matricula {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String titulo;
-    private String descricao;
-    private Integer ordem;
-    private LocalDateTime criadoEm;
+
+    @ManyToOne
+    private Associado associado;
 
     @ManyToOne
     private Curso curso;

@@ -1,10 +1,13 @@
 package com.nexus.backend.mappers;
 
+import com.nexus.backend.dto.associado.AssociadoAtualizacaoDto;
 import com.nexus.backend.dto.associado.AssociadoCriacaoDto;
 import com.nexus.backend.dto.associado.AssociadoRespostaDto;
 import com.nexus.backend.entities.Associado;
 import com.nexus.backend.enums.TipoUsuario;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,5 +35,15 @@ public class AssociadoMapper extends UsuarioMapper<Associado, AssociadoCriacaoDt
         associado.setEndereco(dto.getEndereco());
 
         return associado;
+    }
+
+    public Associado toAtualizacaoEntity(@Valid AssociadoAtualizacaoDto dto, Associado a, PasswordEncoder passwordEncoder){
+        if (dto==null) return null;
+
+        if (dto.getNome() != null ) a.setNome(dto.getNome());
+        if (dto.getEmail() != null) a.setEmail(dto.getEmail());
+        if (dto.getSenha() != null) a.setSenha(passwordEncoder.encode(dto.getSenha()));
+
+       return a;
     }
 }

@@ -4,12 +4,11 @@ import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Associado;
-import com.nexus.backend.entities.Desaparecido;
 import com.nexus.backend.entities.Usuario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.mappers.UsuarioMapper;
 import com.nexus.backend.repositories.AssociadoRepository;
-import com.nexus.backend.repositories.DesaparecidoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,6 +64,7 @@ public class AssociadoService {
         return UsuarioMapper.of(usuarioAutenticado, token);
     }
 
+    @Transactional
     public Associado update(Integer id, Associado a) {
         if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
 
@@ -72,9 +72,17 @@ public class AssociadoService {
         return associadoRepository.save(a);
     }
 
-    public void delete(Integer id) {
-        if (!associadoRepository.existsById(id)) throw new  EntityNotFoundException("Associado");
+    public void adminDelete(Integer id) {
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
 
+        associadoRepository.deleteById(id);
+    }
+
+    public void delete(Integer id, UsuarioLoginDto usuarioLoginDto) {
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
+
+        UsuarioTokenDto usuarioAutenticado = autenticar(usuarioLoginDto);
+        if (!(usuarioAutenticado.getUserId().equals(id))) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         associadoRepository.deleteById(id);
     }
 
