@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.sound.sampled.Port;
 import java.util.List;
 
 @Service
@@ -40,6 +41,25 @@ public class ProfessorService {
     public List<Professor> getAll() {
         return professorRepository.findAll();
     }
+
+    public Professor setAprovado(Integer id){
+        if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
+
+        Professor p = getById(id);
+        p.setId(id);
+        p.setAprovado(true);
+        return professorRepository.save(p);
+    }
+
+    public Professor bloquear(Integer id){
+        if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
+
+        Professor p = getById(id);
+        p.setId(id);
+        p.setAprovado(false);
+        return professorRepository.save(p);
+    }
+
 
     public Professor getById(Integer id) {
         return professorRepository.findById(id).orElseThrow(()

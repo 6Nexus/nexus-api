@@ -27,6 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/administradores")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class AdministradorController {
     private final AdministradorService administradorService;
@@ -124,5 +125,17 @@ public class AdministradorController {
                 .map(professorMapper::toRespostaDto)
                 .toList();
         return ResponseEntity.ok(professorRespostaDtos);
+    }
+
+    @PutMapping("/professor/aprovar/{id}")
+    public ResponseEntity<ProfessorRespostaDto> setAprovado(@PathVariable Integer id){
+        Professor p = professorService.setAprovado(id);
+        return ResponseEntity.created(null).body(professorMapper.toRespostaDto(p));
+    }
+
+    @PutMapping("/professor/bloquear/{id}")
+    public ResponseEntity<ProfessorRespostaDto> bloquear(@PathVariable Integer id){
+        Professor p = professorService.bloquear(id);
+        return ResponseEntity.created(null).body(professorMapper.toRespostaDto(p));
     }
 }
