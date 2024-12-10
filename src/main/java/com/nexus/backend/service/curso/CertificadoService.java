@@ -32,8 +32,13 @@ public class CertificadoService {
                             .filter(progressoQuestionario -> progressoQuestionario.getPontuacao() > 70.0)
                             .collect(Collectors.toList());
 
+//                    if (progressosDoAssociadoNoCurso.size() != quantidadeQuestionariosPorCurso) {
+//                        idsARemover.add(curso.getId());
+//                    }
+
                     if (progressosDoAssociadoNoCurso.size() != quantidadeQuestionariosPorCurso) {
                         idsARemover.add(curso.getId());
+                        return mapear(curso, null);
                     }
 
                     return mapear(curso, dataConclusaoDoCurso(progressosDoAssociadoNoCurso));

@@ -97,6 +97,8 @@ public class ProfessorService {
         if (!professorRepository.existsById(id)) throw new EntityNotFoundException("Professor");
 
         p.setId(id);
+        String senhaCript = passwordEncoder.encode(p.getSenha());
+        p.setSenha(senhaCript);
         return professorRepository.save(p);
     }
 
