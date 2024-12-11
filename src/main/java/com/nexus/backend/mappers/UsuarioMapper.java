@@ -1,8 +1,10 @@
 package com.nexus.backend.mappers;
 
 import com.nexus.backend.dto.associado.AssociadoCriacaoDto;
+import com.nexus.backend.dto.professor.ProfessorCriacaoDto;
 import com.nexus.backend.dto.usuario.UsuarioDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
+import com.nexus.backend.entities.Administrador;
 import com.nexus.backend.entities.Associado;
 import com.nexus.backend.entities.Professor;
 import com.nexus.backend.entities.Usuario;
@@ -15,8 +17,10 @@ public abstract class UsuarioMapper <entityT extends Usuario, dtoT extends Usuar
 
         if (dto instanceof AssociadoCriacaoDto){
             entity = new Associado();
-        }else {
+        }else if (dto instanceof ProfessorCriacaoDto){
             entity = new Professor();
+        }else {
+            entity = new Administrador();
         }
 
         entity.setCpf(dto.getCpf());

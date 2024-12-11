@@ -37,7 +37,7 @@ public class AdministradorController {
 
     private static final String CSV_FILE_PATH = "./relatorio-videos.csv";
     @PostMapping("/login")
-    public ResponseEntity <UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto){
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
         UsuarioTokenDto usuarioTokenDto = administradorService.autenticar(usuarioLoginDto);
 
         return ResponseEntity.status(200).body(usuarioTokenDto);

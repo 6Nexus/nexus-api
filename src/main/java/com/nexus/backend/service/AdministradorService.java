@@ -65,6 +65,26 @@ public class AdministradorService {
         return administradorRepository.save(admin);
     }
 
+//    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
+//
+//        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
+//                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
+//
+//        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+//
+//        Usuario usuarioAutenticado =
+//                administradorRepository.findByEmail(usuarioLoginDto.getEmail())
+//                        .orElseThrow(
+//                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
+//                        );
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        final String token = gerenciadorTokenJwt.generateToken(authentication);
+//
+//        return UsuarioMapper.of(usuarioAutenticado, token);
+//    }
+
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
 
         final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
