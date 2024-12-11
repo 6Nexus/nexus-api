@@ -26,6 +26,13 @@ public class ModuloController {
         return ResponseEntity.created(null).body(idModuloSalvo);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ModuloRespostaDto> listarPorId(@PathVariable Integer id) {
+        Modulo moduloEncontrado = moduloService.buscarPorId(id);
+        ModuloRespostaDto moduloEncontradoDto = ModuloMapper.toRespostaDto(moduloEncontrado);
+        return ResponseEntity.ok(moduloEncontradoDto);
+    }
+
     @GetMapping("/curso/{idCurso}")
     public ResponseEntity<List<ModuloRespostaDto>> listarPorCurso(@PathVariable Integer idCurso) {
         List<Modulo> modulosEncontrados = moduloService.listarPorCurso(idCurso);
