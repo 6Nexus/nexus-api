@@ -90,6 +90,9 @@ public class CursoService {
 
     public Curso atualizar(int id, int idProf, Curso entity) {
         if (!cursoRepository.existsById(id)) throw  new EntityNotFoundException("Curso");
+        byte[] capa = buscarCapaPorCursoId(id);
+
+        entity.setCapa(capa);
         entity.setProfessor(professorService.getById(idProf));
         entity.setId(id);
         return cursoRepository.save(entity);

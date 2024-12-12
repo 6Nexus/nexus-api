@@ -58,8 +58,8 @@ public class ModuloService {
     public Modulo atualizar(int id, int idCurso, Modulo entity) {
         if(!moduloRepository.existsById(id)) throw new EntityNotFoundException("Modulo");
         entity.setCurso(cursoService.buscarPorId(idCurso));
+        entity.setCriadoEm(LocalDateTime.now());
         entity.setId(id);
-
         return moduloRepository.save(entity);
     }
 }
