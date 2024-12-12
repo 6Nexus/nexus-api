@@ -54,4 +54,12 @@ public class ModuloService {
 
         moduloRepository.deleteById(idModulo);
     }
+
+    public Modulo atualizar(int id, int idCurso, Modulo entity) {
+        if(!moduloRepository.existsById(id)) throw new EntityNotFoundException("Modulo");
+        entity.setCurso(cursoService.buscarPorId(idCurso));
+        entity.setId(id);
+
+        return moduloRepository.save(entity);
+    }
 }

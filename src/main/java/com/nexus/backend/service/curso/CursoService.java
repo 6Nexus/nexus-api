@@ -87,4 +87,11 @@ public class CursoService {
 
         cursoRepository.deleteById(idCurso);
     }
+
+    public Curso atualizar(int id, int idProf, Curso entity) {
+        if (!cursoRepository.existsById(id)) throw  new EntityNotFoundException("Curso");
+        entity.setProfessor(professorService.getById(idProf));
+        entity.setId(id);
+        return cursoRepository.save(entity);
+    }
 }

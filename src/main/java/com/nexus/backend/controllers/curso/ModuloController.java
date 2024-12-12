@@ -54,6 +54,14 @@ public class ModuloController {
         return ResponseEntity.ok(null);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ModuloRespostaDto> attModulo(@PathVariable int id, @RequestBody @Valid ModuloCriacaoDto m){
+        Modulo entity = ModuloMapper.toEntidade(m);
+        int idCurso = m.getIdCurso();
+        Modulo moduloSalvo = moduloService.atualizar(id, idCurso, entity);
+        return ResponseEntity.created(null).body(ModuloMapper.toRespostaDto(moduloSalvo));
+    }
+
     @DeleteMapping("/{idModulo}")
     public ResponseEntity<Void> deletar(@PathVariable Integer idModulo) {
         moduloService.deletar(idModulo);

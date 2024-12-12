@@ -9,6 +9,7 @@ import com.nexus.backend.service.curso.CertificadoService;
 import com.nexus.backend.service.curso.CursoService;
 import com.nexus.backend.service.curso.MatriculaService;
 import jakarta.validation.Valid;
+import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class CursoController {
         return ResponseEntity.ok(cursosMapeados);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CursoRespostaDto> listarPorId(@PathVariable Integer id) {
         Curso cursoEncontrado = cursoService.buscarPorId(id);
         CursoRespostaDto cursoEncontradoDto = CursoMapper.toRespostaDto(cursoEncontrado);
@@ -130,6 +131,14 @@ public class CursoController {
         String descricaoAlterada = cursoService.alterarDescricao(idCurso, descricao);
 
         return ResponseEntity.ok(descricaoAlterada);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CursoRespostaDto> attCurso(@PathVariable int id,@RequestBody @Valid CursoCriacaoDto c){
+        Curso entity = CursoMapper.toEntidade(c);
+        int idProf = c.getIdProfessor();
+        Curso cursoSalvo = cursoService.atualizar(id,idProf, entity);
+        return ResponseEntity.created(null).body(CursoMapper.toRespostaDto(cursoSalvo));
     }
 
     @DeleteMapping("/{idCurso}")
