@@ -12,6 +12,7 @@ import com.nexus.backend.entities.curso.video.Video;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.video.VideoRepository;
 import com.nexus.backend.service.curso.ModuloService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -136,5 +137,12 @@ public class VideoService {
         } catch (IOException e) {
             System.out.println("Erro ao tentar apagar o arquivo: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    public Video update(int id, Video videoEntidade) {
+        if (!videoRepository.existsById(id)) throw new EntityNotFoundException("Video");
+        videoEntidade.setId(id);
+        return videoRepository.save(videoEntidade);
     }
 }

@@ -1,8 +1,13 @@
 package com.nexus.backend.mappers.curso.video;
 
+import com.nexus.backend.dto.associado.AssociadoAtualizacaoDto;
+import com.nexus.backend.dto.curso.video.video.VideoAtualizacaoDto;
 import com.nexus.backend.dto.curso.video.video.VideoCriacaoDto;
 import com.nexus.backend.dto.curso.video.video.VideoRespostaDto;
+import com.nexus.backend.entities.Associado;
 import com.nexus.backend.entities.curso.video.Video;
+import jakarta.validation.Valid;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class VideoMapper {
     public static Video toEntidade(VideoCriacaoDto dto) {
@@ -14,6 +19,14 @@ public class VideoMapper {
                 .ordem(dto.getOrdem())
                 .carregadoNoYoutube(false)
                 .build();
+    }
+
+    public static Video toAtualizacaoEntidade(@Valid VideoAtualizacaoDto dto, Video v){
+        if (dto==null) return null;
+
+        if (dto.getTitulo() != null ) v.setTitulo(dto.getTitulo());
+        if (dto.getDescricao() != null) v.setDescricao(dto.getDescricao());
+        return v;
     }
 
     public static VideoRespostaDto toRespostaDto(Video video) {
