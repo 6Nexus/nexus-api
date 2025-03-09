@@ -1,7 +1,16 @@
 package com.nexus.backend.controllers;
 
+import com.nexus.backend.dto.professor.ProfessorCriacaoDto;
+import com.nexus.backend.dto.professor.ProfessorRespostaDto;
+import com.nexus.backend.dto.usuario.UsuarioLoginDto;
+import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Professor;
+import com.nexus.backend.mappers.ProfessorMapper;
 import com.nexus.backend.repositories.ProfessorRepository;
+import com.nexus.backend.service.ProfessorService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,59 +20,58 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/professores")
+@RequiredArgsConstructor
 public class ProfessorController {
 
-    @Autowired
-    private ProfessorRepository professorRepository;
+    private final ProfessorService professorService;
+    private final ProfessorMapper professorMapper;
 
-    // Cadastrar professor
-    @PostMapping
-    public ResponseEntity<Professor> cadastrarProfessor(@RequestBody Professor novoProfessor){
-        novoProfessor.setId(null);
-        return ResponseEntity.status(201).body(professorRepository.save(novoProfessor));
+    @Operation(summary = "Este endpoint autentica os usuários com credenciais válidas.")
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        UsuarioTokenDto usuarioTokenDto = professorService.autenticar(usuarioLoginDto);
+
+        return ResponseEntity.status(200).body(usuarioTokenDto);
     }
 
-    // Listar todos os professores
+    @Operation(summary = "Este endpoint permite a criação de um novo professor no sistema.")
+    @PostMapping
+    public ResponseEntity<ProfessorRespostaDto> cadastrarProfessor(@RequestBody @Valid ProfessorCriacaoDto p) {
+        Professor entity = professorMapper.toCriacaoEntity(p);
+        Professor pSalvo = professorService.register(entity);
+        return ResponseEntity.created(null).body(professorMapper.toRespostaDto(pSalvo));
+    }
+
+    @Operation(summary = "Este endpoint lista todos os professores")
     @GetMapping
-    public ResponseEntity<List<Professor>> listarProfessores() {
-        List<Professor> professores = professorRepository.findAll();
-        if(professores.isEmpty()){
-            return ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.status(200).body(professores);
+    public ResponseEntity<List<ProfessorRespostaDto>> listarProfessores() {
+        List<Professor> professores = professorService.getAll();
+        if (professores.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<ProfessorRespostaDto> professorRespostaDtos = professores
+                .stream()
+                .map(professorMapper::toRespostaDto)
+                .toList();
+        return ResponseEntity.ok(professorRespostaDtos);
     }
 
     // Buscar professor por ID
+    @Operation(summary = "Este endpoint busca o professor pelo ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Professor> buscarPorId(@PathVariable int id){
-        Optional<Professor> professorOp = professorRepository.findById(id);
-
-        if(professorOp.isPresent()){
-            Professor professorEncontrado = professorOp.get();
-            return ResponseEntity.status(200).body(professorEncontrado);
-        }
-
-        return ResponseEntity.status(404).build();
+    public ResponseEntity<ProfessorRespostaDto> buscarPorId(@PathVariable int id) {
+        Professor p = professorService.getById(id);
+        ProfessorRespostaDto dto = professorMapper.toRespostaDto(p);
+        return ResponseEntity.ok(dto);
     }
 
     // Atualizar professor
+    @Operation(summary = "Este endpoint atualiza os dados do professor")
     @PutMapping("/{id}")
-    public ResponseEntity<Professor> atualizarProfessor(@PathVariable int id, @RequestBody Professor professorAtualizado){
-        if(!professorRepository.existsById(id)){
-            return ResponseEntity.status(404).build();
-        }
-        professorAtualizado.setId(id);
-        Professor professorSalvo = professorRepository.save(professorAtualizado);
-        return ResponseEntity.status(200).body(professorSalvo);
+    public ResponseEntity<ProfessorRespostaDto> atualizarProfessor(@PathVariable int id, @RequestBody @Valid ProfessorCriacaoDto p) {
+        Professor entity = professorMapper.toCriacaoEntity(p);
+        Professor pSalvo = professorService.update(id, entity);
+        return ResponseEntity.created(null).body(professorMapper.toRespostaDto(pSalvo));
     }
 
-    // Deletar professor
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProfessor(@PathVariable int id){
-        if(professorRepository.existsById(id)){
-            professorRepository.deleteById(id);
-            return ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.status(404).build();
-    }
+
 }
