@@ -21,9 +21,11 @@ public class ProgressoQuestionario {
     private LocalDateTime dataAtualizacao;
 
     @ManyToOne
+    @JoinColumn(name = "matricula_id")
     private Matricula matricula;
 
     @ManyToOne
+    @JoinColumn(name = "questionario_id")
     private Questionario questionario;
 
 }

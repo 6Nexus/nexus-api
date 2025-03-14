@@ -5,6 +5,8 @@ import com.nexus.backend.entities.Professor;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -26,5 +28,9 @@ public class Curso {
     @ManyToOne
     private Professor professor;
 
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Modulo> modulos;
 
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Matricula> matriculas;
 }
