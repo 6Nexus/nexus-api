@@ -1,6 +1,5 @@
 package com.nexus.backend.entities.curso;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nexus.backend.entities.Professor;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,10 +19,7 @@ public class Curso {
     private String titulo;
     private String categoria;
     private String descricao;
-
-    @JsonIgnore
-    @Column(length = 10 * 1024 * 1024) // 10 Mega Bytes
-    private byte[] capa;
+    private String capaUrl;
 
     @ManyToOne
     private Professor professor;

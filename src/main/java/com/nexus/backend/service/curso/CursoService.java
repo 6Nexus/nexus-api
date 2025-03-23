@@ -4,10 +4,17 @@ import com.nexus.backend.entities.curso.Curso;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.CursoRepository;
 import com.nexus.backend.service.ProfessorService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -15,6 +22,10 @@ import java.util.List;
 public class CursoService {
     private final CursoRepository cursoRepository;
     private final ProfessorService professorService;
+    private final S3Client s3Client;
+
+    @Value("${aws.s3.bucket-name}")
+    private String bucketName;
 
     public List<Curso> listar() {
         return cursoRepository.findAll();
@@ -37,22 +48,63 @@ public class CursoService {
         return cursoRepository.save(curso).getId();
     }
 
-    public void cadastrarCapa(Integer cursoId, byte[] capa) {
+    @Transactional
+    public String cadastrarCapa(Integer cursoId, MultipartFile capa) {
         if (!cursoRepository.existsById(cursoId)) {
             throw new EntityNotFoundException("Curso");
         }
 
-        Curso cursoEncontrado = buscarPorId(cursoId);
-        cursoEncontrado.setCapa(capa);
-        cursoRepository.save(cursoEncontrado);
+        try{
+            Curso cursoEncontrado = buscarPorId(cursoId);
+
+            String capaName = generateStoredName(cursoEncontrado.getId(), cursoEncontrado.getTitulo());
+            String capaUrl = getFileUrl(capaName);
+
+            deleteS3File(capaName);
+
+            var request = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(capaName)
+                    .contentType(capa.getContentType())
+                    .build();
+
+            s3Client.putObject(request, RequestBody.fromBytes(capa.getBytes()));
+
+            cursoEncontrado.setCapaUrl(getFileUrl(capaUrl));
+            cursoRepository.save(cursoEncontrado);
+
+            return capaUrl;
+        }catch (IOException e) {
+            throw new RuntimeException("Erro ao fazer upload para o S3", e);
+        }
     }
 
-    public byte[] buscarCapaPorCursoId(Integer cursoId) {
+    private void deleteS3File(String fileName) {
+        try {
+            var deleteRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build();
+
+            s3Client.deleteObject(deleteRequest);
+        } catch (Exception e) {
+            System.out.println("Aviso: Falha ao deletar a capa antiga do S3. Detalhes: " + e.getMessage());
+        }
+    }
+
+    private String generateStoredName(Integer cursoId, String nomeCurso) {
+        return cursoId + "_" + nomeCurso + "_" + "capa";
+    }
+    private String getFileUrl(String fileName) {
+        return String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+    }
+
+    public String buscarCapaPorCursoId(Integer cursoId) {
         if (!cursoRepository.existsById(cursoId)) {
             throw new EntityNotFoundException("Curso");
         }
 
-        return buscarPorId(cursoId).getCapa();
+        return buscarPorId(cursoId).getCapaUrl();
     }
 
     public Curso buscarPorId(Integer idCurso) {
@@ -90,9 +142,9 @@ public class CursoService {
 
     public Curso atualizar(int id, int idProf, Curso entity) {
         if (!cursoRepository.existsById(id)) throw  new EntityNotFoundException("Curso");
-        byte[] capa = buscarCapaPorCursoId(id);
+        String capaUrl = buscarCapaPorCursoId(id);
 
-        entity.setCapa(capa);
+        entity.setCapaUrl(capaUrl);
         entity.setProfessor(professorService.getById(idProf));
         entity.setId(id);
         return cursoRepository.save(entity);
