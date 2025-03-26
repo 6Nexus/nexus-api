@@ -1,8 +1,10 @@
 package com.nexus.backend.controllers.curso;
 
+import com.nexus.backend.dto.curso.capa.CapaRespostaDto;
 import com.nexus.backend.dto.curso.curso.CursoCriacaoDto;
 import com.nexus.backend.dto.curso.curso.CursoRespostaDto;
 import com.nexus.backend.entities.curso.Curso;
+import com.nexus.backend.mappers.curso.CapaMapper;
 import com.nexus.backend.mappers.curso.CursoMapper;
 import com.nexus.backend.service.curso.CursoService;
 import com.nexus.backend.service.curso.MatriculaService;
@@ -37,9 +39,10 @@ public class CursoController {
     }
 
     @GetMapping(value = "/capa/{cursoId}")
-    public ResponseEntity<String> getCapa(@PathVariable Integer cursoId) {
-        String capaUrl = cursoService.buscarCapaPorCursoId(cursoId);
-        return ResponseEntity.status(200).body(capaUrl);
+    public ResponseEntity<CapaRespostaDto> getCapa(@PathVariable Integer cursoId) {
+        Curso cursoEncontrado = cursoService.buscarCapaPorCursoId(cursoId);
+        CapaRespostaDto capaResposta = CapaMapper.toRespostaDto(cursoEncontrado);
+        return ResponseEntity.status(200).body(capaResposta);
     }
 
     @GetMapping
@@ -136,7 +139,7 @@ public class CursoController {
         Curso entity = CursoMapper.toEntidade(c);
         int idProf = c.getIdProfessor();
         Curso cursoSalvo = cursoService.atualizar(id,idProf, entity);
-        return ResponseEntity.created(null).body(CursoMapper.toRespostaDto(cursoSalvo));
+        return ResponseEntity.ok().body(CursoMapper.toRespostaDto(cursoSalvo));
     }
 
     @DeleteMapping("/{idCurso}")

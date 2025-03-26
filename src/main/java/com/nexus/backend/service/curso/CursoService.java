@@ -70,7 +70,7 @@ public class CursoService {
 
             s3Client.putObject(request, RequestBody.fromBytes(capa.getBytes()));
 
-            cursoEncontrado.setCapaUrl(getFileUrl(capaUrl));
+            cursoEncontrado.setCapaUrl(capaUrl);
             cursoRepository.save(cursoEncontrado);
 
             return capaUrl;
@@ -88,7 +88,7 @@ public class CursoService {
 
             s3Client.deleteObject(deleteRequest);
         } catch (Exception e) {
-            System.out.println("Aviso: Falha ao deletar a capa antiga do S3. Detalhes: " + e.getMessage());
+            System.out.println("Falha ao deletar a capa do S3. Detalhes: " + e.getMessage());
         }
     }
 
@@ -99,12 +99,12 @@ public class CursoService {
         return String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
     }
 
-    public String buscarCapaPorCursoId(Integer cursoId) {
+    public Curso buscarCapaPorCursoId(Integer cursoId) {
         if (!cursoRepository.existsById(cursoId)) {
             throw new EntityNotFoundException("Curso");
         }
 
-        return buscarPorId(cursoId).getCapaUrl();
+        return buscarPorId(cursoId);
     }
 
     public Curso buscarPorId(Integer idCurso) {
@@ -140,13 +140,16 @@ public class CursoService {
         cursoRepository.deleteById(idCurso);
     }
 
+    @Transactional
     public Curso atualizar(int id, int idProf, Curso entity) {
-        if (!cursoRepository.existsById(id)) throw  new EntityNotFoundException("Curso");
-        String capaUrl = buscarCapaPorCursoId(id);
+        Curso cursoExistente = cursoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Curso"));
 
-        entity.setCapaUrl(capaUrl);
-        entity.setProfessor(professorService.getById(idProf));
-        entity.setId(id);
-        return cursoRepository.save(entity);
+        cursoExistente.setTitulo(entity.getTitulo());
+        cursoExistente.setCategoria(entity.getCategoria());
+        cursoExistente.setDescricao(entity.getDescricao());
+        cursoExistente.setProfessor(professorService.getById(idProf));
+
+        return cursoRepository.save(cursoExistente);
     }
 }
