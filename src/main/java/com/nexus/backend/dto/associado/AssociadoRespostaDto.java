@@ -19,7 +19,7 @@ public class AssociadoRespostaDto {
 
     private String telefone;
 
-
-    private String endereco;
-    private String grauParentescoComDesaparecido;
+//
+//    private String endereco;
+//    private String grauParentescoComDesaparecido;
 }

@@ -12,6 +12,8 @@ import lombok.*;
 @Builder
 public class Associado extends Usuario {
 
-    private String endereco;
-    private String grauParentescoComDesaparecido;
+    private Boolean aprovado;
+
+    private String telefone;
+
 }

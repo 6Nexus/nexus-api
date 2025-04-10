@@ -19,8 +19,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class AssociadoCriacaoDto extends UsuarioDto {
 
-    @NotBlank
-    private String endereco;
-    private String grauParentescoComDesaparecido;
+//    @NotBlank
+//    private String endereco;
+//    private String grauParentescoComDesaparecido;
 
 }
