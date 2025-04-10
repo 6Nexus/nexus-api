@@ -20,9 +20,9 @@ public class AssociadoMapper extends UsuarioMapper<Associado, AssociadoCriacaoDt
                 .id(entity.getId())
                 .nome(entity.getNome())
                 .email(entity.getEmail())
-                .endereco(entity.getEndereco())
+//                .endereco(entity.getEndereco())
                 .telefone(entity.getTelefone())
-                .grauParentescoComDesaparecido(entity.getGrauParentescoComDesaparecido())
+//                .grauParentescoComDesaparecido(entity.getGrauParentescoComDesaparecido())
                 .build();
     }
 
@@ -31,8 +31,8 @@ public class AssociadoMapper extends UsuarioMapper<Associado, AssociadoCriacaoDt
 
         Associado associado = super.toEntity(dto);
         associado.setTipoUsuario(TipoUsuario.ASSOCIADO);
-        associado.setGrauParentescoComDesaparecido(dto.getGrauParentescoComDesaparecido());
-        associado.setEndereco(dto.getEndereco());
+//        associado.setGrauParentescoComDesaparecido(dto.getGrauParentescoComDesaparecido());
+//        associado.setEndereco(dto.getEndereco());
 
         return associado;
     }

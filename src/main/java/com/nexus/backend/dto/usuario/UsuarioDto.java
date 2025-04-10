@@ -31,7 +31,7 @@ public class UsuarioDto {
     @NotBlank
 //    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$")
     private String cpf;
-    private String telefone;
+//    private String telefone;
 
 //        @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario;

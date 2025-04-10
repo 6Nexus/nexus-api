@@ -26,7 +26,7 @@ public abstract class Usuario {
     private String senha;
 
     private String cpf;
-    private String telefone;
+//    private String telefone;
 
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario;

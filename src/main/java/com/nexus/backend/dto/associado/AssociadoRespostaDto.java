@@ -19,6 +19,7 @@ public class AssociadoRespostaDto {
 
     private String telefone;
 
+    private Boolean aprovado;
 //
 //    private String endereco;
 //    private String grauParentescoComDesaparecido;
