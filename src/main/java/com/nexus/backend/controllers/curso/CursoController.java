@@ -1,18 +1,21 @@
 package com.nexus.backend.controllers.curso;
 
+import com.nexus.backend.dto.curso.capa.CapaRespostaDto;
 import com.nexus.backend.dto.curso.curso.CursoAssociadoRespostaDto;
 import com.nexus.backend.dto.curso.curso.CursoCriacaoDto;
 import com.nexus.backend.dto.curso.curso.CursoRespostaDto;
 import com.nexus.backend.entities.curso.Curso;
+import com.nexus.backend.mappers.curso.CapaMapper;
 import com.nexus.backend.mappers.curso.CursoMapper;
 import com.nexus.backend.service.curso.CursoService;
 import com.nexus.backend.service.curso.CurtidaService;
 import com.nexus.backend.service.curso.MatriculaService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,16 +35,17 @@ public class CursoController {
         return ResponseEntity.created(null).body(idCursoSalvo);
     }
 
-    @PatchMapping(value = "/capa/{cursoId}", consumes = "image/*")
-    public ResponseEntity<Void> patchCapa(@PathVariable Integer cursoId, @RequestBody byte[] capa) {
-        cursoService.cadastrarCapa(cursoId, capa);
+    @PatchMapping(value = "/capa/{cursoId}")
+    public ResponseEntity<Void> patchCapa(@PathVariable Integer cursoId, @RequestParam("file") @NotNull MultipartFile file) {
+        cursoService.cadastrarCapa(cursoId, file);
         return ResponseEntity.status(200).build();
     }
 
-    @GetMapping(value = "/capa/{cursoId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getCapa(@PathVariable Integer cursoId) {
-        byte[] capa = cursoService.buscarCapaPorCursoId(cursoId);
-        return ResponseEntity.status(200).body(capa);
+    @GetMapping(value = "/capa/{cursoId}")
+    public ResponseEntity<CapaRespostaDto> getCapa(@PathVariable Integer cursoId) {
+        Curso cursoEncontrado = cursoService.buscarCapaPorCursoId(cursoId);
+        CapaRespostaDto capaResposta = CapaMapper.toRespostaDto(cursoEncontrado);
+        return ResponseEntity.status(200).body(capaResposta);
     }
 
     @GetMapping
@@ -150,7 +154,7 @@ public class CursoController {
         Curso entity = CursoMapper.toEntidade(c);
         int idProf = c.getIdProfessor();
         Curso cursoSalvo = cursoService.atualizar(id,idProf, entity);
-        return ResponseEntity.created(null).body(CursoMapper.toRespostaDto(cursoSalvo));
+        return ResponseEntity.ok().body(CursoMapper.toRespostaDto(cursoSalvo));
     }
 
     @DeleteMapping("/{idCurso}")

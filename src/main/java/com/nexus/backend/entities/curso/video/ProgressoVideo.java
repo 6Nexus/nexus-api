@@ -17,9 +17,10 @@ public class ProgressoVideo {
     private Boolean assistido;
 
     @ManyToOne
+    @JoinColumn(name = "matricula_id")
     private Matricula matricula;
 
     @ManyToOne
+    @JoinColumn(name = "video_id")
     private Video video;
-
 }

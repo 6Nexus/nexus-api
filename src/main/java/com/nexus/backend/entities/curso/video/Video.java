@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,5 +27,9 @@ public class Video {
     private LocalDateTime criadoEm;
 
     @ManyToOne
+    @JoinColumn(name = "modulo_id")
     private Modulo modulo;
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProgressoVideo> progressosVideo;
 }
