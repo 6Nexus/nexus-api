@@ -1,5 +1,6 @@
 package com.nexus.backend.controllers.curso;
 
+import com.nexus.backend.dto.curso.curso.CursoAssociadoRespostaDto;
 import com.nexus.backend.dto.curso.curso.CursoRespostaDto;
 import com.nexus.backend.dto.curso.curtida.CurtidaCriacaoDto;
 import com.nexus.backend.entities.curso.Curtida;
@@ -26,12 +27,12 @@ public class CurtidaController {
     }
 
     @GetMapping("/{idAssociado}")
-    public ResponseEntity<List<CursoRespostaDto>> buscarCurtidosPorAssociado(@PathVariable Integer idAssociado) {
+    public ResponseEntity<List<CursoAssociadoRespostaDto>> buscarCurtidosPorAssociado(@PathVariable Integer idAssociado) {
         List<Curtida> cursosCurtidos = curtidaService.buscarCurtidosPorAssociado(idAssociado);
         if (cursosCurtidos.isEmpty()) return ResponseEntity.noContent().build();
 
-        List<CursoRespostaDto> cursosCurtidosMapeados = cursosCurtidos.stream().
-                map(CursoMapper::toRespostaDto).
+        List<CursoAssociadoRespostaDto> cursosCurtidosMapeados = cursosCurtidos.stream().
+                map(CursoMapper::toRespostaAssociadoDto).
                 toList();
 
         return ResponseEntity.ok().body(cursosCurtidosMapeados);

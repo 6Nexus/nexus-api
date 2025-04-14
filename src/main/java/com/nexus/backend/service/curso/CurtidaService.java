@@ -40,6 +40,10 @@ public class CurtidaService {
         return curtidas;
     }
 
+    public Boolean existeCurtidaPorAssociadoECurso(Integer idAssociado, Integer idCurso) {
+        return curtidaRepository.existsByAssociadoIdAndCursoId(idAssociado, idCurso);
+    }
+
     @Transactional
     public void deletarCurtida(Integer idAssociado, Integer idCurso) {
         if (!curtidaRepository.existsByAssociadoIdAndCursoId(idAssociado, idCurso)) throw new EntityNotFoundException("Curtida");
