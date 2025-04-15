@@ -31,6 +31,7 @@ public class AssociadoMapper extends UsuarioMapper<Associado, AssociadoCriacaoDt
         if (dto==null) return null;
 
         Associado associado = super.toEntity(dto);
+        associado.setTelefone(dto.getTelefone());
         associado.setTipoUsuario(TipoUsuario.ASSOCIADO);
 //        associado.setGrauParentescoComDesaparecido(dto.getGrauParentescoComDesaparecido());
 //        associado.setEndereco(dto.getEndereco());

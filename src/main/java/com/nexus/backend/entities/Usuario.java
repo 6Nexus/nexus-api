@@ -25,7 +25,7 @@ public abstract class Usuario {
     private String email;
     private String senha;
 
-    private String cpf;
+//    private String cpf;
 //    private String telefone;
 
     @Enumerated(EnumType.STRING)
