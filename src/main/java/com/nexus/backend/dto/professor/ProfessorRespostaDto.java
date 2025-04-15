@@ -12,4 +12,6 @@ public class ProfessorRespostaDto {
     private String cpf;
 //    private String telefone;
     private String areaAtuacao;
+    private Boolean aprovado;
+
 }

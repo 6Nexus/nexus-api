@@ -18,8 +18,9 @@ public class ProfessorMapper extends UsuarioMapper<Professor, ProfessorCriacaoDt
                 .nome(entity.getNome())
                 .email(entity.getEmail())
                 .cpf(entity.getCpf())
-                .telefone(entity.getTelefone())
+//                .telefone(entity.getTelefone())
                 .areaAtuacao(entity.getAreaAtuacao())
+                .aprovado(entity.getAprovado())
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Associado;
+import com.nexus.backend.entities.Professor;
 import com.nexus.backend.entities.Usuario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.mappers.UsuarioMapper;
@@ -35,6 +36,25 @@ public class AssociadoService {
 
     public Associado getById(Integer id) {
         return associadoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public Associado setAprovado(Integer id){
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
+
+        Associado a = getById(id);
+        a.setId(id);
+        a.setAprovado(true);
+        return associadoRepository.save(a);
+    }
+
+
+    public Associado bloquear(Integer id){
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Professor");
+
+        Associado a = getById(id);
+        a.setId(id);
+        a.setAprovado(false);
+        return associadoRepository.save(a);
     }
 
     public Associado register(Associado a) {
