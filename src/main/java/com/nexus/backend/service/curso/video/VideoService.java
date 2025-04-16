@@ -7,27 +7,26 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.nexus.backend.entities.curso.Matricula;
 import com.nexus.backend.entities.curso.video.Video;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.repositories.curso.video.VideoRepository;
 import com.nexus.backend.service.curso.ModuloService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +37,10 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final ModuloService moduloService;
     private final CredencialService credencialService;
+    private final S3Client s3Client;
+
+    @Value("${aws.s3.bucket-name}")
+    private String bucketName;
 
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private Path diretorioBase = Path.of(System.getProperty("user.dir") + "/arquivos");
@@ -62,9 +65,15 @@ public class VideoService {
 
         String nomeArquivoFormatado = formatarNomeArquivo(file.getOriginalFilename());
         String filePath = this.diretorioBase + "/" + nomeArquivoFormatado;
-        File destino = new File(filePath);
+
         try {
-            file.transferTo(destino);
+            var request = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(nomeArquivoFormatado)
+                    .contentType(file.getContentType())
+                    .build();
+
+            s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ResponseStatusException(422, "Não foi possível salvar o arquivo", null);
@@ -114,16 +123,32 @@ public class VideoService {
         snippet.setDescription(video.getDescricao());
         videoACarregar.setSnippet(snippet);
 
+        String key = Paths.get(video.getPath()).getFileName().toString();
 
-        File videoFile = new File(video.getPath());
-        InputStreamContent mediaContent = new InputStreamContent("video/*", new BufferedInputStream(new FileInputStream(videoFile)));
-        mediaContent.setLength(videoFile.length());
+        File tempFile = File.createTempFile("video_temp_", key);
+        tempFile.deleteOnExit();
 
-        YouTube.Videos.Insert videoInsert = youtubeService.videos()
-                .insert("snippet,statistics,status", videoACarregar, mediaContent);
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
 
-        com.google.api.services.youtube.model.Video videoCarregado = videoInsert.execute();
-        return videoCarregado.getId();
+        try (ResponseInputStream<GetObjectResponse> s3InputStream = s3Client.getObject(getObjectRequest);
+             FileOutputStream fos = new FileOutputStream(tempFile)) {
+            s3InputStream.transferTo(fos);
+        }
+
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(tempFile))) {
+            InputStreamContent mediaContent = new InputStreamContent("video/*", bis);
+            mediaContent.setLength(tempFile.length());
+
+            YouTube.Videos.Insert videoInsert = youtubeService.videos()
+                    .insert("snippet,statistics,status", videoACarregar, mediaContent);
+
+            com.google.api.services.youtube.model.Video videoCarregado = videoInsert.execute();
+
+            return videoCarregado.getId();
+        }
     }
 
     public void deletarDoServidor(Video video) {
