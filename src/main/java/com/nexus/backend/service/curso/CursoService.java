@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.List;
 
 @Service
@@ -54,29 +55,34 @@ public class CursoService {
             throw new EntityNotFoundException("Curso");
         }
 
+        Curso cursoEncontrado = buscarPorId(cursoId);
+
+        String capaName = generateStoredName(cursoEncontrado.getId(), cursoEncontrado.getTitulo());
+        String capaUrl = getFileUrl(capaName);
+
+        String key = extrairKeyDaUrl(cursoEncontrado.getCapaUrl());
+        deleteS3File(key);
+
         try{
-            Curso cursoEncontrado = buscarPorId(cursoId);
-
-            String capaName = generateStoredName(cursoEncontrado.getId(), cursoEncontrado.getTitulo());
-            String capaUrl = getFileUrl(capaName);
-
-            deleteS3File(capaName);
-
             var request = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(capaName)
+                    .key("capa/" + capaName)
                     .contentType(capa.getContentType())
                     .build();
 
             s3Client.putObject(request, RequestBody.fromBytes(capa.getBytes()));
-
-            cursoEncontrado.setCapaUrl(capaUrl);
-            cursoRepository.save(cursoEncontrado);
-
-            return capaUrl;
         }catch (IOException e) {
             throw new RuntimeException("Erro ao fazer upload para o S3", e);
         }
+
+        cursoEncontrado.setCapaUrl(capaUrl);
+        cursoRepository.save(cursoEncontrado);
+
+        return capaUrl;
+    }
+
+    private String extrairKeyDaUrl(String url) {
+        return url.replace(String.format("https://%s.s3.amazonaws.com/", bucketName), "");
     }
 
     private void deleteS3File(String fileName) {
@@ -93,10 +99,18 @@ public class CursoService {
     }
 
     private String generateStoredName(Integer cursoId, String nomeCurso) {
-        return cursoId + "_" + nomeCurso + "_" + "capa";
+        String nomeFormatado = Normalizer.normalize(nomeCurso, Normalizer.Form.NFD)
+                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                .trim()
+                .toLowerCase()
+                .replaceAll("[^a-z0-9\\s]", "")
+                .replaceAll("\\s+", "_");
+
+        return cursoId + "_" + nomeFormatado;
     }
+
     private String getFileUrl(String fileName) {
-        return String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+        return String.format("https://%s.s3.amazonaws.com/capa/%s", bucketName, fileName);
     }
 
     public Curso buscarCapaPorCursoId(Integer cursoId) {
