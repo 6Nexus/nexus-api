@@ -60,8 +60,10 @@ public class CursoService {
         String capaName = generateStoredName(cursoEncontrado.getId(), cursoEncontrado.getTitulo());
         String capaUrl = getFileUrl(capaName);
 
-        String key = extrairKeyDaUrl(cursoEncontrado.getCapaUrl());
-        deleteS3File(key);
+        if (cursoEncontrado.getCapaUrl() != null) {
+            String key = extrairKeyDaUrl(cursoEncontrado.getCapaUrl());
+            deleteS3File(key);
+        }
 
         try{
             var request = PutObjectRequest.builder()

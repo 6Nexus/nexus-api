@@ -42,7 +42,7 @@ public class AssociadoMapper extends UsuarioMapper<Associado, AssociadoCriacaoDt
 
         if (dto.getNome() != null ) a.setNome(dto.getNome());
         if (dto.getEmail() != null) a.setEmail(dto.getEmail());
-        if (dto.getSenha() != null) a.setSenha(passwordEncoder.encode(dto.getSenha()));
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) a.setSenha(passwordEncoder.encode(dto.getSenha()));
 
        return a;
     }
