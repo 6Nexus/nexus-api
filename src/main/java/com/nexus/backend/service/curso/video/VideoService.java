@@ -14,6 +14,7 @@ import com.nexus.backend.service.curso.ModuloService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -41,9 +43,7 @@ public class VideoService {
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
-
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private Path diretorioBase = Path.of(System.getProperty("user.dir") + "/arquivos");
 
     public List<Video> listarPorModulo(Integer idModulo) {
         return videoRepository.findByModuloIdOrderByOrdemAsc(idModulo);
@@ -60,26 +60,23 @@ public class VideoService {
     }
 
     public Integer cadastrar(Video video, Integer idModulo, MultipartFile file) {
-        if (file.isEmpty()) throw new ResponseStatusException(400, "Nenhum arquivo enviado", null);
-        if (!this.diretorioBase.toFile().exists()) this.diretorioBase.toFile().mkdir();
+        if (file.isEmpty()) throw new ResponseStatusException(HttpStatus.NO_CONTENT);
 
         String nomeArquivoFormatado = formatarNomeArquivo(file.getOriginalFilename());
-        String filePath = this.diretorioBase + "/" + nomeArquivoFormatado;
 
         try {
             var request = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(nomeArquivoFormatado)
+                    .key("video-aula/" + nomeArquivoFormatado)
                     .contentType(file.getContentType())
                     .build();
 
             s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
         } catch (IOException e) {
-            e.printStackTrace();
             throw new ResponseStatusException(422, "Não foi possível salvar o arquivo", null);
         }
 
-        video.setPath(filePath);
+        video.setFileName(nomeArquivoFormatado);
         video.setCriadoEm(LocalDateTime.now());
         video.setModulo(moduloService.buscarPorId(idModulo));
         return videoRepository.save(video).getId();
@@ -100,7 +97,8 @@ public class VideoService {
                         if (!urlDoVideo.isEmpty()) {
                             video.setYoutubeUrl(urlDoVideo);
                             video.setCarregadoNoYoutube(true);
-                            deletarDoServidor(videoRepository.save(video));
+                            videoRepository.save(video);
+                            deleteS3File(video.getFileName());
                         }
                     });
         }
@@ -123,14 +121,14 @@ public class VideoService {
         snippet.setDescription(video.getDescricao());
         videoACarregar.setSnippet(snippet);
 
-        String key = Paths.get(video.getPath()).getFileName().toString();
+        String key = Paths.get(video.getFileName()).getFileName().toString();
 
         File tempFile = File.createTempFile("video_temp_", key);
         tempFile.deleteOnExit();
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
-                .key(key)
+                .key("video-aula/" + key)
                 .build();
 
         try (ResponseInputStream<GetObjectResponse> s3InputStream = s3Client.getObject(getObjectRequest);
@@ -151,16 +149,16 @@ public class VideoService {
         }
     }
 
-    public void deletarDoServidor(Video video) {
-        Path caminhoDoArquivo = Path.of(video.getPath());
+    private void deleteS3File(String fileName) {
         try {
-            Files.delete(caminhoDoArquivo);
-        } catch (NoSuchFileException e) {
-            System.out.println("O arquivo não existe!");
-        } catch (DirectoryNotEmptyException e) {
-            System.out.println("O diretório não está vazio!");
-        } catch (IOException e) {
-            System.out.println("Erro ao tentar apagar o arquivo: " + e.getMessage());
+            var deleteRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key("video-aula/" + fileName)
+                    .build();
+
+            s3Client.deleteObject(deleteRequest);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao deletar arquivo do S3");
         }
     }
 

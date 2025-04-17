@@ -22,7 +22,7 @@ public class Video {
     private String descricao;
     private Integer ordem;
     private Boolean carregadoNoYoutube;
-    private String path;
+    private String fileName;
     private String youtubeUrl;
     private LocalDateTime criadoEm;
 
