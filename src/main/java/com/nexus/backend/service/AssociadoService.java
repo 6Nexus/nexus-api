@@ -57,6 +57,8 @@ public class AssociadoService {
         return associadoRepository.save(a);
     }
 
+//    public List<Associado>
+
     public Associado register(Associado a) {
         String senhaCript = passwordEncoder.encode(a.getSenha());
         a.setSenha(senhaCript);
@@ -107,4 +109,11 @@ public class AssociadoService {
         associadoRepository.deleteById(id);
     }
 
+    public List<Associado> getAprovadoFalse() {
+        return associadoRepository.findByAprovadoFalse();
+    }
+
+    public List<Associado> getAprovadoTrue() {
+        return associadoRepository.findByAprovadoTrue();
+    }
 }

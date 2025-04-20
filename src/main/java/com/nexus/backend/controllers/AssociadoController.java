@@ -80,13 +80,13 @@ public class AssociadoController {
         return ResponseEntity.created(null).body(returnDto);
     }
 
-    // Deletar associado - Admin
-    @Operation(summary = "Este endpoint permite deletar o usuário do sistema através do admin")
-    @DeleteMapping("/admin/{id}")
-    public ResponseEntity<Void> deletarAssociadoAdmin(@PathVariable int id) {
-        associadoService.adminDelete(id);
-        return ResponseEntity.noContent().build();
-    }
+//    // Deletar associado - Admin
+//    @Operation(summary = "Este endpoint permite deletar o usuário do sistema através do admin")
+//    @DeleteMapping("/admin/{id}")
+//    public ResponseEntity<Void> deletarAssociadoAdmin(@PathVariable int id) {
+//        associadoService.adminDelete(id);
+//        return ResponseEntity.noContent().build();
+//    }
 
     // Deletar associado - Associado
     @Operation(summary = "Este endpoint permite que um usuário delete a própria conta")

@@ -2,14 +2,18 @@ package com.nexus.backend.controllers;
 
 import com.nexus.backend.dto.administrador.AdministradorCriacaoDto;
 import com.nexus.backend.dto.administrador.AdministradorRespostaDto;
+import com.nexus.backend.dto.associado.AssociadoRespostaDto;
 import com.nexus.backend.dto.professor.ProfessorRespostaDto;
 import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Administrador;
+import com.nexus.backend.entities.Associado;
 import com.nexus.backend.entities.Professor;
 import com.nexus.backend.mappers.AdministradorMapper;
+import com.nexus.backend.mappers.AssociadoMapper;
 import com.nexus.backend.mappers.ProfessorMapper;
 import com.nexus.backend.service.AdministradorService;
+import com.nexus.backend.service.AssociadoService;
 import com.nexus.backend.service.ProfessorService;
 import org.springframework.core.io.Resource;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +38,8 @@ public class AdministradorController {
     private final AdministradorMapper administradorMapper;
     private final ProfessorService professorService;
     private final ProfessorMapper professorMapper;
+    private final AssociadoService associadoService;
+    private final AssociadoMapper associadoMapper;
 
     private static final String CSV_FILE_PATH = "./relatorio-videos.csv";
     @PostMapping("/login")
@@ -128,7 +134,7 @@ public class AdministradorController {
     }
 
     @PutMapping("/professor/aprovar/{id}")
-    public ResponseEntity<ProfessorRespostaDto> setAprovado(@PathVariable Integer id){
+    public ResponseEntity<ProfessorRespostaDto> setProfessorAprovado(@PathVariable Integer id){
         Professor p = professorService.setAprovado(id);
         return ResponseEntity.created(null).body(professorMapper.toRespostaDto(p));
     }
@@ -138,4 +144,53 @@ public class AdministradorController {
         Professor p = professorService.bloquear(id);
         return ResponseEntity.created(null).body(professorMapper.toRespostaDto(p));
     }
+
+    // gerenciamento de associadas
+
+    // Deletar associados
+    @Operation(summary = "Este endpoint permite deletar o usuário do sistema através do admin")
+    @DeleteMapping("/associados/{id}")
+    public ResponseEntity<Void> deletarAssociadoAdmin(@PathVariable int id) {
+        associadoService.adminDelete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/associados/aprovadoFalse")
+    public ResponseEntity<List<AssociadoRespostaDto>> getAssociadoAprovadoFalse(){
+        List<Associado> associados = associadoService.getAprovadoFalse();
+        if (associados.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<AssociadoRespostaDto> associadoRespostaDtos = associados
+                .stream()
+                .map(associadoMapper::toRespostaDto)
+                .toList();
+        return ResponseEntity.ok(associadoRespostaDtos);
+    }
+
+    @GetMapping("/associados/aprovadoTrue")
+    public ResponseEntity<List<AssociadoRespostaDto>> getAssociadoAprovadoTrue(){
+        List<Associado> associados = associadoService.getAprovadoTrue();
+        if (associados.isEmpty()) return ResponseEntity.noContent().build();
+
+        List<AssociadoRespostaDto> associadoRespostaDtos = associados
+                .stream()
+                .map(associadoMapper::toRespostaDto)
+                .toList();
+        return ResponseEntity.ok(associadoRespostaDtos);
+    }
+
+    @PutMapping("/associados/aprovar/{id}")
+    public ResponseEntity<AssociadoRespostaDto> setAssociadoAprovado(@PathVariable Integer id){
+        Associado a = associadoService.setAprovado(id);
+        return ResponseEntity.created(null).body(associadoMapper.toRespostaDto(a));
+    }
+
+    @PutMapping("/associados/bloquear/{id}")
+    public ResponseEntity<AssociadoRespostaDto> bloquearAssociado(@PathVariable Integer id){
+        Associado a = associadoService.bloquear(id);
+        return ResponseEntity.created(null).body(associadoMapper.toRespostaDto(a));
+    }
+
+
 }
