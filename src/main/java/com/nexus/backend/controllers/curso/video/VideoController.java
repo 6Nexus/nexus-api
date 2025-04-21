@@ -12,9 +12,11 @@ import com.nexus.backend.mappers.curso.video.VideoMapper;
 import com.nexus.backend.service.curso.video.VideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,7 +26,6 @@ import java.util.List;
 public class VideoController {
     private final VideoService videoService;
 
-//  upload de video no servidor
     @PostMapping
     public ResponseEntity<Integer> cadastrar(@RequestParam("json") String json,
                                              @RequestParam("arquivo") MultipartFile file) {
@@ -32,12 +33,11 @@ public class VideoController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             VideoCriacaoDto videoGeradoDoJson = objectMapper.readValue(json, VideoCriacaoDto.class);
-
             Video videoEntrada = VideoMapper.toEntidade(videoGeradoDoJson);
 
             idVideoSalvo = videoService.cadastrar(videoEntrada, videoGeradoDoJson.getIdModulo(), file);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar o JSON", e);
         }
 
         return ResponseEntity.created(null).body(idVideoSalvo);
