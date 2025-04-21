@@ -23,6 +23,7 @@ public class MatriculaService {
         Matricula matriculaACadastrar = Matricula.builder()
                 .curso(cursoService.buscarPorId(cursoId))
                 .associado(associadoService.getById(associadoId))
+                .certificadoEmitido(false)
                 .build();
         return matriculaRepository.save(matriculaACadastrar).getId();
     }

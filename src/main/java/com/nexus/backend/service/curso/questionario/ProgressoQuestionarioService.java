@@ -7,7 +7,9 @@ import com.nexus.backend.service.curso.MatriculaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +48,16 @@ public class ProgressoQuestionarioService {
         );
     }
 
-    public List<ProgressoQuestionario> buscarPorMatricula(Integer matriculaId) {
-        return progressoQuestionarioRepository.findByMatriculaId(matriculaId);
+    public Integer quantidadePorMatriculaComPontuacaoMaiorQue70(Integer matriculaId) {
+        return progressoQuestionarioRepository.countByMatriculaIdAndPontuacaoGreaterThan(matriculaId, 70.0).orElseThrow(
+                () -> new EntityNotFoundException("Progresso Questionário")
+        );    }
+
+    public List<ProgressoQuestionario> respondidosOntemComPontuacaoMaiorQue70() {
+        LocalDate ontem = LocalDate.now().minusDays(1);
+        LocalDateTime inicioDeOntem = ontem.atStartOfDay();
+        LocalDateTime fimDeOntem = ontem.atTime(LocalTime.MAX);
+
+        return progressoQuestionarioRepository.findByDataAtualizacaoBetweenAndPontuacaoGreaterThanEqual(inicioDeOntem, fimDeOntem,70.0);
     }
 }

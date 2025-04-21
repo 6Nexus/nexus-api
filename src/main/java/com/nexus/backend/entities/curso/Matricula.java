@@ -14,6 +14,7 @@ public class Matricula {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Boolean certificadoEmitido;
 
     @ManyToOne
     private Associado associado;
