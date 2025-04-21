@@ -4,6 +4,7 @@ import com.nexus.backend.dto.usuario.UsuarioDto;
 import com.nexus.backend.enums.TipoUsuario;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,8 +20,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class AssociadoCriacaoDto extends UsuarioDto {
 
-    @NotBlank
-    private String endereco;
-    private String grauParentescoComDesaparecido;
+//    @NotBlank
+//    private String endereco;
+//    private String grauParentescoComDesaparecido;
+
+    @AssertFalse
+    private Boolean aprovado;
+
+    private String telefone;
 
 }

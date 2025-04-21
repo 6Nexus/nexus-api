@@ -10,6 +10,8 @@ public class ProfessorRespostaDto {
     private String nome;
     private String email;
     private String cpf;
-    private String telefone;
+//    private String telefone;
     private String areaAtuacao;
+    private Boolean aprovado;
+
 }
