@@ -49,4 +49,9 @@ public class MatriculaService {
                 () -> new EntityNotFoundException("Matrícula")
         );
     }
+
+    public void atualizarEmissaoCertificado(Matricula matricula) {
+        matricula.setCertificadoEmitido(true);
+        matriculaRepository.save(matricula);
+    }
 }

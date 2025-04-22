@@ -32,6 +32,7 @@ public class CertificadoService {
     private final ProgressoQuestionarioService progressoQuestionarioService;
     private final TemplateEngine templateEngine;
     private final EmailService emailService;
+    private final MatriculaService matriculaService;
 
     @Scheduled(cron = "0 30 0 * * *")
     public void enviarCertificados() {
@@ -49,6 +50,8 @@ public class CertificadoService {
             }).forEach(progresso -> {
                     try {
                         gerarCertificado(progresso.getMatricula());
+
+                        matriculaService.atualizarEmissaoCertificado(progresso.getMatricula());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
