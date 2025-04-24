@@ -28,10 +28,10 @@ public class UsuarioDto {
     @Size(min = 6)
     private String senha;
 
-    @NotBlank
+//    @NotBlank
 //    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$")
-    private String cpf;
-    private String telefone;
+//    private String cpf;
+//    private String telefone;
 
 //        @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario;
