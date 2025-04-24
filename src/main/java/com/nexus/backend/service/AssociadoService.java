@@ -4,6 +4,7 @@ import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
 import com.nexus.backend.entities.Associado;
+import com.nexus.backend.entities.Professor;
 import com.nexus.backend.entities.Usuario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
 import com.nexus.backend.mappers.UsuarioMapper;
@@ -37,6 +38,27 @@ public class AssociadoService {
         return associadoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    public Associado setAprovado(Integer id){
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
+
+        Associado a = getById(id);
+        a.setId(id);
+        a.setAprovado(true);
+        return associadoRepository.save(a);
+    }
+
+
+    public Associado bloquear(Integer id){
+        if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Professor");
+
+        Associado a = getById(id);
+        a.setId(id);
+        a.setAprovado(false);
+        return associadoRepository.save(a);
+    }
+
+//    public List<Associado>
+
     public Associado register(Associado a) {
         String senhaCript = passwordEncoder.encode(a.getSenha());
         a.setSenha(senhaCript);
@@ -67,8 +89,7 @@ public class AssociadoService {
     @Transactional
     public Associado update(Integer id, Associado a) {
         if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
-        String senhaCript = passwordEncoder.encode(a.getSenha());
-        a.setSenha(senhaCript);
+
         a.setId(id);
         return associadoRepository.save(a);
     }
@@ -87,4 +108,11 @@ public class AssociadoService {
         associadoRepository.deleteById(id);
     }
 
+    public List<Associado> getAprovadoFalse() {
+        return associadoRepository.findByAprovadoFalse();
+    }
+
+    public List<Associado> getAprovadoTrue() {
+        return associadoRepository.findByAprovadoTrue();
+    }
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CursoRespostaDto {
+public class CursoAssociadoRespostaDto {
     private Integer id;
     private String titulo;
     private String categoria;
@@ -17,4 +17,5 @@ public class CursoRespostaDto {
     private String capaUrl;
     private Integer professorId;
     private String professorNome;
+    private Boolean curtido;
 }

@@ -16,7 +16,7 @@ public class AdministradorMapper extends UsuarioMapper<Administrador, Administra
                 .id(entity.getId())
                 .nome(entity.getNome())
                 .email(entity.getEmail())
-                .telefone(entity.getTelefone())
+//                .telefone(entity.getTelefone())
                 .cargo(entity.getCargo())
                 .build();
     }
