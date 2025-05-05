@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AssociadoRepository extends JpaRepository<Associado, Integer> {
-    Optional<Usuario> findByEmail(String email);
+        Optional<Usuario> findByEmail(String email);
 
     List<Associado> findByAprovadoFalse();
 
