@@ -126,8 +126,7 @@ public class AssociadoService {
     @Transactional
     public Associado update(Integer id, Associado a) {
         if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
-        String senhaCript = passwordEncoder.encode(a.getSenha());
-        a.setSenha(senhaCript);
+
         a.setId(id);
         return associadoRepository.save(a);
     }

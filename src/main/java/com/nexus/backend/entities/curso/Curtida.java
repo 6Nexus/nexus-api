@@ -1,5 +1,6 @@
-package com.nexus.backend.entities.curso.questionario;
+package com.nexus.backend.entities.curso;
 
+import com.nexus.backend.entities.Associado;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,13 +10,15 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resposta {
+public class Curtida {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String resposta;
 
     @ManyToOne
-    @JoinColumn(name = "pergunta_id")
-    Pergunta pergunta;
+    private Associado associado;
+
+    @ManyToOne
+    @JoinColumn(name = "curso_id")
+    private Curso curso;
 }

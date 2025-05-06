@@ -1,9 +1,10 @@
 package com.nexus.backend.entities.curso;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nexus.backend.entities.Professor;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,13 +19,17 @@ public class Curso {
     private String titulo;
     private String categoria;
     private String descricao;
-
-    @JsonIgnore
-    @Column(length = 10 * 1024 * 1024) // 10 Mega Bytes
-    private byte[] capa;
+    private String capaUrl;
 
     @ManyToOne
     private Professor professor;
 
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Modulo> modulos;
 
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Matricula> matriculas;
+
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Curtida> curtidas;
 }
