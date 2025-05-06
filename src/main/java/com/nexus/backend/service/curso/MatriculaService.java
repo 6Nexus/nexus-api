@@ -23,6 +23,7 @@ public class MatriculaService {
         Matricula matriculaACadastrar = Matricula.builder()
                 .curso(cursoService.buscarPorId(cursoId))
                 .associado(associadoService.getById(associadoId))
+                .certificadoEmitido(false)
                 .build();
         return matriculaRepository.save(matriculaACadastrar).getId();
     }
@@ -47,5 +48,10 @@ public class MatriculaService {
         return matriculaRepository.findById(idMatricula).orElseThrow(
                 () -> new EntityNotFoundException("Matrícula")
         );
+    }
+
+    public void atualizarEmissaoCertificado(Matricula matricula) {
+        matricula.setCertificadoEmitido(true);
+        matriculaRepository.save(matricula);
     }
 }
