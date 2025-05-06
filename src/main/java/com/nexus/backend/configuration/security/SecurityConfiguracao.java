@@ -1,9 +1,9 @@
 package com.nexus.backend.configuration.security;
 
+
 import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.service.AutenticacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -39,9 +39,6 @@ public class SecurityConfiguracao {
 
     @Autowired
     private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
-
-    @Value("${allowed.cors.origins:http://localhost:3000}")
-    private String allowedOrigins;
 
     private static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
             new AntPathRequestMatcher("/swagger-ui/**"),
@@ -119,20 +116,19 @@ public class SecurityConfiguracao {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuracao = new CorsConfiguration();
-        configuracao.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
-        configuracao.setAllowedMethods(Arrays.asList(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.PATCH.name(),
-                HttpMethod.DELETE.name(),
-                HttpMethod.OPTIONS.name(),
-                HttpMethod.HEAD.name(),
-                HttpMethod.TRACE.name()
-        ));
-        configuracao.setAllowedHeaders(List.of("*"));
+        configuracao.applyPermitDefaultValues();
+        configuracao.setAllowedMethods(
+                Arrays.asList(
+                        HttpMethod.GET.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.PATCH.name(),
+                        HttpMethod.DELETE.name(),
+                        HttpMethod.OPTIONS.name(),
+                        HttpMethod.HEAD.name(),
+                        HttpMethod.TRACE.name()));
+
         configuracao.setExposedHeaders(List.of(HttpHeaders.CONTENT_DISPOSITION));
-        configuracao.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource origem = new UrlBasedCorsConfigurationSource();
         origem.registerCorsConfiguration("/**", configuracao);

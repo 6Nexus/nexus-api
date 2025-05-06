@@ -3,6 +3,7 @@ package com.nexus.backend.service;
 import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.dto.usuario.UsuarioLoginDto;
 import com.nexus.backend.dto.usuario.UsuarioTokenDto;
+import com.nexus.backend.entities.Associado;
 import com.nexus.backend.entities.Professor;
 import com.nexus.backend.entities.Usuario;
 import com.nexus.backend.exceptions.EntityNotFoundException;
@@ -66,25 +67,65 @@ public class ProfessorService {
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+//    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
+//
+//        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
+//                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
+//
+//        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+//
+//        Usuario usuarioAutenticado =
+//                professorRepository.findByEmail(usuarioLoginDto.getEmail())
+//                        .orElseThrow(
+//                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
+//                        );
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        final String token = gerenciadorTokenJwt.generateToken(authentication);
+//
+//        return UsuarioMapper.of(usuarioAutenticado, token);
+//    }
+
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
+        UsernamePasswordAuthenticationToken credentials =
+                new UsernamePasswordAuthenticationToken(
+                        usuarioLoginDto.getEmail(),
+                        usuarioLoginDto.getSenha()
+                );
+        Authentication authentication =
+                authenticationManager.authenticate(credentials);
 
-        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
 
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
-
-        Usuario usuarioAutenticado =
+        Usuario usuario =
                 professorRepository.findByEmail(usuarioLoginDto.getEmail())
-                        .orElseThrow(
-                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
+                        .orElseThrow(() ->
+                                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                        "Email do usuário não cadastrado")
                         );
 
+        if (!(usuario instanceof Professor)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Este usuário não é do tipo Professor"
+            );
+        }
+        Professor professor = (Professor) usuario;
+        if (!professor.getAprovado()) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Este associado ainda não foi aprovado pelo sistema."
+            );
+        }
+
+        //Gera o token
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = gerenciadorTokenJwt.generateToken(authentication);
 
-        final String token = gerenciadorTokenJwt.generateToken(authentication);
-
-        return UsuarioMapper.of(usuarioAutenticado, token);
+        return UsuarioMapper.of(professor, token);
     }
+
+
 
     public Professor register(Professor p) {
         String senhaCript = passwordEncoder.encode(p.getSenha());
