@@ -54,7 +54,7 @@ public class ProgressoQuestionarioService {
         );    }
 
     public List<ProgressoQuestionario> respondidosOntemComPontuacaoMaiorQue70() {
-        LocalDate ontem = LocalDate.now().minusDays(1);
+        LocalDate ontem = LocalDate.now();
         LocalDateTime inicioDeOntem = ontem.atStartOfDay();
         LocalDateTime fimDeOntem = ontem.atTime(LocalTime.MAX);
 

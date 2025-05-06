@@ -40,7 +40,7 @@ public class CertificadoService {
 
         progressosEnviadosOntem.stream()
             .filter(progresso -> {
-                    if (!progresso.getMatricula().getCertificadoEmitido()) return false;
+                    if (progresso.getMatricula().getCertificadoEmitido()) return false;
 
                     Integer cursoId = progresso.getMatricula().getCurso().getId();
                     Integer quantidadeModulos = moduloService.qtdModulosPorCurso(cursoId);
@@ -73,7 +73,7 @@ public class CertificadoService {
         context.setVariable("data", dataFormatada);
         context.setVariable("curso", curso);
 
-        String html = templateEngine.process("exemplo", context);
+        String html = templateEngine.process("certificado", context);
 
         File base = new ClassPathResource("static/").getFile();
         String baseUri = base.toURI().toString();
