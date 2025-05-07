@@ -75,8 +75,7 @@ public class CertificadoService {
 
         String html = templateEngine.process("certificado", context);
 
-        File base = new ClassPathResource("static/").getFile();
-        String baseUri = base.toURI().toString();
+        String baseUri = new ClassPathResource("static/").getURL().toString();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

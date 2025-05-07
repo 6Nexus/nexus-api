@@ -4,6 +4,7 @@ package com.nexus.backend.configuration.security;
 import com.nexus.backend.configuration.security.jwt.GerenciadorTokenJwt;
 import com.nexus.backend.service.AutenticacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,7 @@ public class SecurityConfiguracao {
 
     @Autowired
     private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
+
 
     private static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
             new AntPathRequestMatcher("/swagger-ui/**"),
