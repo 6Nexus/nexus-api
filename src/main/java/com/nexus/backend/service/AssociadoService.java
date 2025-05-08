@@ -38,7 +38,7 @@ public class AssociadoService {
         return associadoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    public Associado setAprovado(Integer id){
+    public Associado setAprovado(Integer id) {
         if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
 
         Associado a = getById(id);
@@ -48,7 +48,7 @@ public class AssociadoService {
     }
 
 
-    public Associado bloquear(Integer id){
+    public Associado bloquear(Integer id) {
         if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Professor");
 
         Associado a = getById(id);
@@ -57,8 +57,6 @@ public class AssociadoService {
         return associadoRepository.save(a);
     }
 
-//    public List<Associado>
-
     public Associado register(Associado a) {
         String senhaCript = passwordEncoder.encode(a.getSenha());
         a.setSenha(senhaCript);
@@ -66,31 +64,69 @@ public class AssociadoService {
         return associadoRepository.save(a);
     }
 
+    //    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
+//
+//        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
+//                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
+//
+//        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+//
+//        Usuario usuarioAutenticado =
+//                associadoRepository.findByEmail(usuarioLoginDto.getEmail())
+//                        .orElseThrow(
+//                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
+//                        );
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        final String token = gerenciadorTokenJwt.generateToken(authentication);
+//
+//        return UsuarioMapper.of(usuarioAutenticado, token);
+//    }
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
+        // 1) Autentica credenciais (email + senha)
+        UsernamePasswordAuthenticationToken credentials =
+                new UsernamePasswordAuthenticationToken(
+                        usuarioLoginDto.getEmail(),
+                        usuarioLoginDto.getSenha()
+                );
+        Authentication authentication =
+                authenticationManager.authenticate(credentials);
 
-        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
 
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
-
-        Usuario usuarioAutenticado =
+        Usuario usuario =
                 associadoRepository.findByEmail(usuarioLoginDto.getEmail())
-                        .orElseThrow(
-                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
+                        .orElseThrow(() ->
+                                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                        "Email do usuário não cadastrado")
                         );
 
+        if (!(usuario instanceof Associado)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Este usuário não é do tipo Associado"
+            );
+        }
+        Associado associado = (Associado) usuario;
+        if (!associado.getAprovado()) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Este associado ainda não foi aprovado pelo sistema."
+            );
+        }
+
+        //Gera o token
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = gerenciadorTokenJwt.generateToken(authentication);
 
-        final String token = gerenciadorTokenJwt.generateToken(authentication);
-
-        return UsuarioMapper.of(usuarioAutenticado, token);
+        return UsuarioMapper.of(associado, token);
     }
+
 
     @Transactional
     public Associado update(Integer id, Associado a) {
         if (!associadoRepository.existsById(id)) throw new EntityNotFoundException("Associado");
-        String senhaCript = passwordEncoder.encode(a.getSenha());
-        a.setSenha(senhaCript);
+
         a.setId(id);
         return associadoRepository.save(a);
     }

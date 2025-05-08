@@ -21,7 +21,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class CredencialService {
 //    private static final String CLIENT_SECRETS= "C:\\Users\\aaman\\Downloads\\secret.json";
-    private static final String CLIENT_SECRETS = Path.of(System.getProperty("user.dir") + "/oauth/secret.json").toString();
+    private static final String CLIENT_SECRETS = "/app/oauth/secret.json";
     private static final Collection<String> SCOPES = Collections.singletonList("https://www.googleapis.com/auth/youtube.upload");
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 

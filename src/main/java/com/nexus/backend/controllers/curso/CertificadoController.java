@@ -11,10 +11,8 @@ import com.nexus.backend.service.curso.CursoService;
 import com.nexus.backend.service.curso.MatriculaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,22 +21,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CertificadoController {
     private final CertificadoService certificadoService;
-    private final CursoService cursoService;
-    private final MatriculaService matriculaService;
 
-    @GetMapping("{associadoId}")
-    public ResponseEntity<List<CertificadoRespostaDto>> listarCertificados(@PathVariable Integer associadoId) {
-        List<Integer> idsCursosMatriculados = matriculaService.idCursosMatriculados(associadoId);
-        List<Curso> cursosEncontrados = cursoService.listarPorIds(idsCursosMatriculados);
-        if (cursosEncontrados.isEmpty()) return ResponseEntity.noContent().build();
+    @PostMapping()
+    public ResponseEntity<Void> emitirCertificados() {
+        certificadoService.enviarCertificados();
 
-        List<Certificado> certificadosDisponiveis = certificadoService.certificadosDisponiveis(associadoId, cursosEncontrados);
-        if (certificadosDisponiveis.isEmpty()) return ResponseEntity.noContent().build();
-
-        List<CertificadoRespostaDto> certificadosMapeados = certificadosDisponiveis.stream()
-                .map(CertificadoMapper::toRespostaDto)
-                .toList();
-
-        return ResponseEntity.ok(certificadosMapeados);
+        return ResponseEntity.ok().build();
     }
 }

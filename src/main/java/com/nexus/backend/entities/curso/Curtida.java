@@ -19,5 +19,6 @@ public class Curtida {
     private Associado associado;
 
     @ManyToOne
+    @JoinColumn(name = "curso_id")
     private Curso curso;
 }
