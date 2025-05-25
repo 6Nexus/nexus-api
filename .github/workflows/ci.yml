@@ -1,11 +1,8 @@
 name: Exemplo de CI # Nome do workflow
 
 on:
-  pull_request: # Evento que dispara o workflow
-    branches:  # Branch que dispara o workflow
-      - main
-      - develop
-    types: [opened, reopened]
+	push:
+		branches: [main]
 
 jobs:
   build: # Primeiro trabalho: Build
